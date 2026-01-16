@@ -53,6 +53,9 @@ public class APIUserInfo implements HttpHandler {
             }
             //写入响应数据
             responseData.putAll(BasicInfo.userInfo);
+            responseData.replace("email","已绑定");
+            responseData.replace("phone","已绑定");
+            responseData.replace("qq","已绑定");
             responseData.replace("success",true);
         } catch (Exception e) {
             BasicInfo.logger.sendException(e);

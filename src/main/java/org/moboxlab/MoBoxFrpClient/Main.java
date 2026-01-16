@@ -65,7 +65,7 @@ public class Main {
         //计时
         long completeTime = System.currentTimeMillis();
         BasicInfo.logger.sendInfo("启动完成！耗时："+(completeTime-startTime)+"毫秒！");
-        BasicInfo.logger.sendInfo("管理页面请访问http://127.0.0.1:"+BasicInfo.config.getInteger("httpPort"));
+        BasicInfo.logger.sendInfo("请访问 http://127.0.0.1:"+BasicInfo.config.getInteger("httpPort")+"/ 进入管理页面！");
     }
 
     public static void checkThursday() {
