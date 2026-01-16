@@ -1,2 +1,17 @@
 # MoBoxFrp 客户端配置文件
 # By MossCG
+
+#----------------------------------
+# 账号信息
+# 如果在此处配置了账号，请将此项设为true，就会自动登录
+# 反之，请使用login指令登录
+autoLogin: false
+# 登录方式（phone/email）
+login: "phone"
+# 账号配置
+account: ""
+password: ""
+
+#----------------------------------
+#是否显示调试信息
+debug: false
