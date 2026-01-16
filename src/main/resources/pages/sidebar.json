@@ -1,0 +1,39 @@
+[
+  {
+    "id": "main-home",
+    "name": "主页",
+    "icon": "\uD83C\uDFE0",
+    "type": "single",
+    "order": 1,
+    "url": "/"
+  },
+  {
+    "id": "main-services",
+    "name": "服务",
+    "icon": "\uD83D\uDD27",
+    "type": "group",
+    "order": 5,
+    "submenus": [
+      {
+        "id": "services-codes",
+        "name": "穿透码列表",
+        "url": "/services/codes",
+        "order": 1
+      },
+      {
+        "id": "services-tunnel",
+        "name": "隧道列表",
+        "url": "/services/tunnel",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": "main-web",
+    "name": "官网",
+    "icon": "\uD83D\uDDA5\uFE0F",
+    "type": "single",
+    "order": 10,
+    "url": "https://www.moboxfrp.com/"
+  }
+]

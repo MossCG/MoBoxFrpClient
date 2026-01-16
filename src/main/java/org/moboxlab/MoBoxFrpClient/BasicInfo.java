@@ -31,6 +31,15 @@ public class BasicInfo {
     public static JSONObject userInfo;
     public static JSONArray codeInfo;
 
+    //系统状态信息
+    public static double memoryMax = 4.0;
+    public static double memoryUsage = 2.0;
+    public static double cpuUsage = 1.0;
+    public static double bandUpload = 1.0;
+    public static double bandDownload = 1.0;
+    public static double bandUploadTotal = 1.0;
+    public static double bandDownloadTotal = 1.0;
+
     //MossLib框架功能模块
     public static ObjectLogger logger;
     public static ObjectConfig config;

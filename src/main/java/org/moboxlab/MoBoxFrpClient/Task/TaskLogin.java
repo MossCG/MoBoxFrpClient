@@ -14,6 +14,7 @@ public class TaskLogin {
         if (!loginResult.getBoolean("success")) {
             BasicInfo.logger.sendWarn("登录失败！");
             BasicInfo.logger.sendWarn("失败原因："+loginResult.getString("message"));
+            BasicInfo.login = false;
         } else {
             BasicInfo.logger.sendInfo("登录成功！");
             BasicInfo.token = loginResult.getString("token");

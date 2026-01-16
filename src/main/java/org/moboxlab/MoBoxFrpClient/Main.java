@@ -4,6 +4,8 @@ import org.moboxlab.MoBoxFrpClient.Command.CommandDebug;
 import org.moboxlab.MoBoxFrpClient.Command.CommandExit;
 import org.moboxlab.MoBoxFrpClient.Command.CommandLogin;
 import org.moboxlab.MoBoxFrpClient.Task.TaskLogin;
+import org.moboxlab.MoBoxFrpClient.Tick.TickStatus;
+import org.moboxlab.MoBoxFrpClient.Web.WebMain;
 import org.mossmc.mosscg.MossLib.Command.CommandManager;
 import org.mossmc.mosscg.MossLib.Config.ConfigManager;
 import org.mossmc.mosscg.MossLib.File.FileCheck;
@@ -46,6 +48,14 @@ public class Main {
             TaskLogin.executeTask(login,account,password);
         }
 
+        //Tick线程初始化
+        BasicInfo.logger.sendInfo("正在启动Tick线程......");
+        TickStatus.runTick();
+
+        //WebAPI模块初始化
+        BasicInfo.logger.sendInfo("正在初始化WebAPI模块......");
+        WebMain.initWeb();
+
         //命令行初始化
         CommandManager.initCommand(BasicInfo.logger,true);
         CommandManager.registerCommand(new CommandExit());
@@ -55,6 +65,7 @@ public class Main {
         //计时
         long completeTime = System.currentTimeMillis();
         BasicInfo.logger.sendInfo("启动完成！耗时："+(completeTime-startTime)+"毫秒！");
+        BasicInfo.logger.sendInfo("管理页面请访问http://127.0.0.1:"+BasicInfo.config.getInteger("httpPort"));
     }
 
     public static void checkThursday() {
