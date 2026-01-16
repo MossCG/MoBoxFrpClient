@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.moboxlab.MoBoxFrpClient.BasicInfo;
 import org.moboxlab.MoBoxFrpClient.Web.Request.RequestCodes;
-import org.moboxlab.MoBoxFrpClient.Web.Request.RequestUserInfo;
 
 public class TaskGetCodes {
     public static void executeTask(boolean display) {
