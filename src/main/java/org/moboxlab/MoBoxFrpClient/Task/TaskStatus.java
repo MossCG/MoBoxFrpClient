@@ -1,6 +1,5 @@
 package org.moboxlab.MoBoxFrpClient.Task;
 
-import com.alibaba.fastjson.JSONObject;
 import org.moboxlab.MoBoxFrpClient.BasicInfo;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
