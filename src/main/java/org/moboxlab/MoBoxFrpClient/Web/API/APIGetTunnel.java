@@ -5,7 +5,6 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.moboxlab.MoBoxFrpClient.BasicInfo;
 import org.moboxlab.MoBoxFrpClient.Cache.CacheProcess;
-import org.moboxlab.MoBoxFrpClient.Task.TaskTunnelStart;
 import org.moboxlab.MoBoxFrpClient.Web.WebBasic;
 
 import java.io.IOException;
@@ -64,9 +63,7 @@ public class APIGetTunnel implements HttpHandler {
             JSONObject requestData = WebBasic.loadRequestData(exchange);
             //获取数据
             JSONObject data = new JSONObject();
-            CacheProcess.processMap.forEach((id,process) -> {
-                data.put(id,process.data);
-            });
+            CacheProcess.processMap.forEach((id,process) -> data.put(id,process.data));
             //写入响应数据
             responseData.replace("tunnels",data);
             responseData.replace("success",true);

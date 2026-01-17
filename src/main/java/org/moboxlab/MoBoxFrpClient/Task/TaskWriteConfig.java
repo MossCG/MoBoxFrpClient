@@ -21,6 +21,8 @@ public class TaskWriteConfig {
             builder.append("serverPort = ").append(data.getString("serverPort")).append("\r\n");
             builder.append("auth.token = \"").append(data.getString("token")).append("\"\r\n");
 
+            //压缩没写（
+
             //空行
             builder.append("\r\n");
 
