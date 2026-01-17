@@ -31,6 +31,9 @@ public class BasicInfo {
     public static JSONObject userInfo;
     public static JSONArray codeInfo;
 
+    //守护进程
+    public static Process daemon;
+
     //系统状态信息
     public static double memoryMax = 4.0;
     public static double memoryUsage = 2.0;
