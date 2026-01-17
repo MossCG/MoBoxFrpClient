@@ -7,8 +7,9 @@ import org.moboxlab.MoBoxFrpClient.Cache.CacheConfig;
 import java.io.*;
 
 public class TaskReadConfig {
-    public static void executeTask(){
+    public static void executeTask(boolean autoStart){
         try {
+            CacheConfig.configCache.clear();
             File file = new File("./MoBoxFrp/configs");
             if (!file.exists()) return;
             File[] list = file.listFiles();
@@ -23,12 +24,14 @@ public class TaskReadConfig {
                     BasicInfo.logger.sendInfo("已加载保存的配置文件："+configFile.getName());
                 }
             }
-            CacheConfig.configCache.forEach((id,data) -> {
-                if (data.getBoolean("autoStart")) {
-                    TaskTunnelStart.executeTask(id);
-                    BasicInfo.logger.sendInfo("已自动启动配置文件隧道："+id);
-                }
-            });
+            if (autoStart) {
+                CacheConfig.configCache.forEach((id,data) -> {
+                    if (data.getBoolean("autoStart")) {
+                        TaskTunnelStart.executeTask(id);
+                        BasicInfo.logger.sendInfo("已自动启动配置文件隧道："+id);
+                    }
+                });
+            }
         } catch (Exception e) {
             BasicInfo.logger.sendException(e);
             BasicInfo.logger.sendWarn("执行任务ReadConfig时出现异常！");

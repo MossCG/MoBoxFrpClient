@@ -19,6 +19,14 @@ public class TaskClearFile {
                     rubbish.delete();
                 }
             }
+            file = new File("./MoBoxFrp/pages");
+            if (!file.exists()) return;
+            list = file.listFiles();
+            if (list != null) {
+                for (File rubbish : list) {
+                    rubbish.delete();
+                }
+            }
         } catch (Exception e) {
             BasicInfo.logger.sendException(e);
             BasicInfo.logger.sendWarn("执行任务UpdateFile时出现异常！");

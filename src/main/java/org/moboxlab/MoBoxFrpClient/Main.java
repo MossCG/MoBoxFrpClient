@@ -1,8 +1,6 @@
 package org.moboxlab.MoBoxFrpClient;
 
-import org.moboxlab.MoBoxFrpClient.Command.CommandDebug;
-import org.moboxlab.MoBoxFrpClient.Command.CommandExit;
-import org.moboxlab.MoBoxFrpClient.Command.CommandLogin;
+import org.moboxlab.MoBoxFrpClient.Command.*;
 import org.moboxlab.MoBoxFrpClient.Task.*;
 import org.moboxlab.MoBoxFrpClient.Tick.TickStatus;
 import org.moboxlab.MoBoxFrpClient.Tick.TickWatchdog;
@@ -70,20 +68,32 @@ public class Main {
 
         //自动启动隧道
         BasicInfo.logger.sendInfo("正在检查自动启动隧道......");
-        TaskReadConfig.executeTask();
+        TaskReadConfig.executeTask(true);
 
         //命令行初始化
         CommandManager.initCommand(BasicInfo.logger,true);
         CommandManager.registerCommand(new CommandExit());
         CommandManager.registerCommand(new CommandDebug());
         CommandManager.registerCommand(new CommandLogin());
+        CommandManager.registerCommand(new CommandConfig());
+        CommandManager.registerCommand(new CommandHelp());
+        CommandManager.registerCommand(new CommandReload());
+        CommandManager.registerCommand(new CommandTunnel());
 
         //计时
         long completeTime = System.currentTimeMillis();
         BasicInfo.logger.sendInfo("======================================================================");
         BasicInfo.logger.sendInfo("启动完成！耗时："+(completeTime-startTime)+"毫秒！");
+        BasicInfo.logger.sendInfo("使用指令help查询命令帮助！");
         BasicInfo.logger.sendInfo("请访问 http://127.0.0.1:"+BasicInfo.config.getInteger("httpPort")+"/ 进入管理页面！");
         BasicInfo.logger.sendInfo("======================================================================");
+    }
+
+    public static void reload() {
+        BasicInfo.logger.sendInfo("正在重载配置文件......");
+        BasicInfo.config = ConfigManager.getConfigObject("./MoBoxFrp", "config.yml", "config.yml");
+        BasicInfo.debug = BasicInfo.config.getBoolean("debug");
+        TaskReadConfig.executeTask(false);
     }
 
     public static void checkThursday() {

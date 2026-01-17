@@ -1010,6 +1010,46 @@
             color: var(--gray);
             font-style: italic;
         }
+
+        /* 登录标签页样式 */
+        .login-tabs {
+            display: flex;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .login-tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--gray);
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .login-tab.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .login-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        .form-hint {
+            color: var(--gray);
+            font-size: 13px;
+            margin-top: 8px;
+        }
     </style>
 </head>
 <body>
@@ -1502,11 +1542,12 @@
     }
 
     function getStatusBadge(status) {
-        if (status === true || status === 'true') {
-            return '<span class="status-badge status-running">运行中</span>';
-        } else {
-            return '<span class="status-badge status-stopped">已停止</span>';
-        }
+        return '<span class="status-badge status-running">运行中</span>';
+    }
+
+    function formatAddress(ip, port) {
+        if (!ip || !port) return '未知';
+        return `${ip}:${port}`;
     }
 
     function formatToken(token) {
@@ -1571,6 +1612,11 @@
 
         const tunnelCards = tunnelKeys.map(tunnelId => {
             const tunnel = tunnelsList[tunnelId];
+
+            // 格式化访问地址和本地地址
+            const accessAddress = formatAddress(tunnel.serverAddress, tunnel.openPort);
+            const localAddress = formatAddress(tunnel.localAddress || '127.0.0.1', tunnel.localPort);
+
             return `
                 <div class="tunnel-card" data-tunnel-id="${tunnelId}">
                     <div class="tunnel-card-header">
@@ -1589,32 +1635,16 @@
                                 <span class="tunnel-detail-value">${getProtocolBadge(tunnel.protocol)}</span>
                             </li>
                             <li class="tunnel-detail-item">
-                                <span class="tunnel-detail-label">服务器地址</span>
-                                <span class="tunnel-detail-value">${tunnel.serverAddress || '未知'}</span>
-                            </li>
-                            <li class="tunnel-detail-item">
-                                <span class="tunnel-detail-label">服务器端口</span>
-                                <span class="tunnel-detail-value">${tunnel.serverPort || '未知'}</span>
-                            </li>
-                            <li class="tunnel-detail-item">
-                                <span class="tunnel-detail-label">开放端口</span>
-                                <span class="tunnel-detail-value">${tunnel.openPort || '未知'}</span>
+                                <span class="tunnel-detail-label">访问地址</span>
+                                <span class="tunnel-detail-value">${accessAddress}</span>
                             </li>
                             <li class="tunnel-detail-item">
                                 <span class="tunnel-detail-label">本地地址</span>
-                                <span class="tunnel-detail-value">${tunnel.localAddress || '127.0.0.1'}</span>
+                                <span class="tunnel-detail-value">${localAddress}</span>
                             </li>
                             <li class="tunnel-detail-item">
-                                <span class="tunnel-detail-label">本地端口</span>
-                                <span class="tunnel-detail-value">${tunnel.localPort || '未知'}</span>
-                            </li>
-                            <li class="tunnel-detail-item">
-                                <span class="tunnel-detail-label">流量压缩</span>
-                                <span class="tunnel-detail-value">${getStatusBadge(tunnel.compress)}</span>
-                            </li>
-                            <li class="tunnel-detail-item">
-                                <span class="tunnel-detail-label">自动启动</span>
-                                <span class="tunnel-detail-value">${getStatusBadge(tunnel.autoStart)}</span>
+                                <span class="tunnel-detail-label">状态</span>
+                                <span class="tunnel-detail-value">${getStatusBadge()}</span>
                             </li>
                         </ul>
                     </div>

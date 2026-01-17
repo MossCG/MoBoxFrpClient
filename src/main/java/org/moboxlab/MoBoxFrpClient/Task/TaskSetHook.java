@@ -20,7 +20,6 @@ public class TaskSetHook {
             command += (" -systemType="+BasicInfo.config.getString("systemType"));
             command += (" -pid="+runtimeName[0]);
             BasicInfo.daemon = Runtime.getRuntime().exec(command);
-            BasicInfo.logger.sendInfo(command);
             BasicInfo.logger.sendInfo("守护进程已启动！");
         } catch (Exception e) {
             BasicInfo.logger.sendException(e);

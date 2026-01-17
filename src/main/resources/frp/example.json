@@ -1,7 +1,7 @@
 {
   "description": "MoBoxFrp隧道配置文件示例",
   "name": "example",
-  "token": "3sz122123775697402749",
+  "token": "3sz1xxxxx",
   "serverAddress": "sz1.moboxfrp.cn",
   "serverPort": "55446",
   "openPort": "55447",
