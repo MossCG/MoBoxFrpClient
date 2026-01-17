@@ -14,10 +14,18 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - run: mvn -B clean package --file pom.xml -DskipTests
+      # 给脚本执行权限
+      - name: Make script executable
+        run: chmod +x package.sh
 
-      - name: Upload build artifact
+      # 使用自定义脚本打包
+      - name: Custom package with MossLib
+        run: ./package.sh
+
+      # 上传JAR文件
+      - name: Upload JAR artifact
         uses: actions/upload-artifact@v4
         with:
-          name: MoBoxFrpClient-JAR
-          path: target/*.jar
+          name: MoBoxFrpClient
+          path: target/MoBoxFrpClient.jar
+          compression-level: 0  # 不压缩
