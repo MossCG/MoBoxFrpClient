@@ -39,6 +39,15 @@ public class Main {
         BasicInfo.config = ConfigManager.getConfigObject("./MoBoxFrp", "config.yml", "config.yml");
         BasicInfo.debug = BasicInfo.config.getBoolean("debug");
 
+        //检查命令行启动
+        if (BasicInfo.config.getString("systemType").equals("Windows")) {
+            if (System.console() == null) {
+                BasicInfo.logger.sendInfo("请使用命令行启动哦！");
+                TaskStartConsole.executeTask();
+                System.exit(1);
+            }
+        }
+
         //文件检查
         BasicInfo.logger.sendInfo("正在检查本地文件......");
         FileCheck.checkDirExist("./MoBoxFrp/frp");
