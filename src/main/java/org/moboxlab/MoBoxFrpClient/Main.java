@@ -3,14 +3,16 @@ package org.moboxlab.MoBoxFrpClient;
 import org.moboxlab.MoBoxFrpClient.Command.CommandDebug;
 import org.moboxlab.MoBoxFrpClient.Command.CommandExit;
 import org.moboxlab.MoBoxFrpClient.Command.CommandLogin;
-import org.moboxlab.MoBoxFrpClient.Task.TaskLogin;
+import org.moboxlab.MoBoxFrpClient.Task.*;
 import org.moboxlab.MoBoxFrpClient.Tick.TickStatus;
+import org.moboxlab.MoBoxFrpClient.Tick.TickWatchdog;
 import org.moboxlab.MoBoxFrpClient.Web.WebMain;
 import org.mossmc.mosscg.MossLib.Command.CommandManager;
 import org.mossmc.mosscg.MossLib.Config.ConfigManager;
 import org.mossmc.mosscg.MossLib.File.FileCheck;
 import org.mossmc.mosscg.MossLib.Object.ObjectLogger;
 
+import java.lang.management.ManagementFactory;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -36,8 +38,14 @@ public class Main {
 
         //配置文件初始化
         BasicInfo.logger.sendInfo("正在读取配置文件......");
+        FileCheck.checkDirExist("./MoBoxFrp/configs");
         BasicInfo.config = ConfigManager.getConfigObject("./MoBoxFrp", "config.yml", "config.yml");
         BasicInfo.debug = BasicInfo.config.getBoolean("debug");
+
+        //文件检查
+        BasicInfo.logger.sendInfo("正在检查本地文件......");
+        FileCheck.checkDirExist("./MoBoxFrp/frp");
+        TaskClearFile.executeTask();
 
         //尝试自动登录
         if (BasicInfo.config.getBoolean("autoLogin")) {
@@ -51,10 +59,19 @@ public class Main {
         //Tick线程初始化
         BasicInfo.logger.sendInfo("正在启动Tick线程......");
         TickStatus.runTick();
+        TickWatchdog.runTick();
 
         //WebAPI模块初始化
         BasicInfo.logger.sendInfo("正在初始化WebAPI模块......");
         WebMain.initWeb();
+
+        //设置hook
+        BasicInfo.logger.sendInfo("正在设置Shutdown Hook......");
+        TaskSetHook.executeTask();
+
+        //自动启动隧道
+        BasicInfo.logger.sendInfo("正在检查自动启动隧道......");
+        TaskReadConfig.executeTask();
 
         //命令行初始化
         CommandManager.initCommand(BasicInfo.logger,true);
@@ -64,8 +81,10 @@ public class Main {
 
         //计时
         long completeTime = System.currentTimeMillis();
+        BasicInfo.logger.sendInfo("======================================================================");
         BasicInfo.logger.sendInfo("启动完成！耗时："+(completeTime-startTime)+"毫秒！");
         BasicInfo.logger.sendInfo("请访问 http://127.0.0.1:"+BasicInfo.config.getInteger("httpPort")+"/ 进入管理页面！");
+        BasicInfo.logger.sendInfo("======================================================================");
     }
 
     public static void checkThursday() {

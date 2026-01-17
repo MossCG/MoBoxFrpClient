@@ -4,7 +4,7 @@ import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.spi.HttpServerProvider;
 import org.moboxlab.MoBoxFrpClient.BasicInfo;
 import org.moboxlab.MoBoxFrpClient.Web.API.*;
-//import org.moboxlab.MoBoxFrpClient.Web.Page.*;
+import org.moboxlab.MoBoxFrpClient.Web.Page.*;
 import org.moboxlab.MoBoxFrpClient.Cache.CacheSidebar;
 import org.mossmc.mosscg.MossLib.File.FileCheck;
 
@@ -23,6 +23,10 @@ public class WebMain {
             //文件检查
             FileCheck.checkDirExist("./MoBoxFrp/pages");
             FileCheck.checkFileExist("./MoBoxFrp/pages/index.html","pages/index.html");
+            FileCheck.checkFileExist("./MoBoxFrp/pages/codes.html","pages/codes.html");
+            FileCheck.checkFileExist("./MoBoxFrp/pages/configCreate.html","pages/configCreate.html");
+            FileCheck.checkFileExist("./MoBoxFrp/pages/configManager.html","pages/configManager.html");
+            FileCheck.checkFileExist("./MoBoxFrp/pages/tunnel.html","pages/tunnel.html");
 
             //初始化接口
             provider = HttpServerProvider.provider();
@@ -30,12 +34,28 @@ public class WebMain {
 
             //页面部分
             server.createContext("/",new WebHandler());
+            server.createContext("/services/codes",new PageCodes());
+            server.createContext("/services/configCreate",new PageConfigCreate());
+            server.createContext("/services/configManager",new PageConfigManager());
+            server.createContext("/services/tunnel",new PageTunnel());
+
 
             //API接口部分
             //基本接口
             server.createContext("/API/Login",new APILogin());
             server.createContext("/API/UserInfo",new APIUserInfo());
             server.createContext("/API/ClientInfo",new APIClientInfo());
+            server.createContext("/API/Codes",new APICodes());
+            //配置文件接口
+            server.createContext("/API/Config/Get",new APIGetConfig());
+            server.createContext("/API/Config/Create",new APICreateConfig());
+            server.createContext("/API/Config/Delete",new APIDeleteConfig());
+            server.createContext("/API/Config/Edit",new APIEditConfig());
+            //隧道操作接口
+            server.createContext("/API/Tunnel/Start",new APIStartTunnel());
+            server.createContext("/API/Tunnel/Stop",new APIStopTunnel());
+            server.createContext("/API/Tunnel/Get",new APIGetTunnel());
+            server.createContext("/API/Tunnel/Log",new APIGetTunnelLog());
             //信息类接口
             server.createContext("/API/Sidebar",new APISidebar());
 

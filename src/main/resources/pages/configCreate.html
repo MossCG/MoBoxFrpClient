@@ -1,0 +1,2170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:,">
+    <title>MoBoxFrp - 创建配置文件</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --primary-light: rgba(67, 97, 238, 0.1);
+            --secondary: #7209b7;
+            --secondary-light: rgba(114, 9, 183, 0.1);
+            --success: #07c160;
+            --success-light: rgba(7, 193, 96, 0.1);
+            --warning: #f72585;
+            --warning-light: rgba(247, 37, 133, 0.1);
+            --danger: #ef233c;
+            --danger-light: rgba(239, 35, 60, 0.1);
+            --info: #4cc9f0;
+            --info-light: rgba(76, 201, 240, 0.1);
+            --white: #ffffff;
+            --dark: #212529;
+            --gray: #6c757d;
+            --light-gray: #f8f9fa;
+            --border-color: #e9ecef;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --sidebar-width: 260px;
+            --header-height: 60px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #f5f7ff 0%, #f0f2ff 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        .header-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: var(--white);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .greeting {
+            font-size: 14px;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--primary-light);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .user-info:hover {
+            background: rgba(67, 97, 238, 0.15);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .switch-account-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: var(--light-gray);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--gray);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .switch-account-btn:hover {
+            background: var(--border-color);
+            color: var(--dark);
+        }
+
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .sidebar-container {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: var(--white);
+            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            z-index: 999;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+            list-style: none;
+            margin: 0;
+            flex: 1;
+        }
+
+        .menu-item {
+            margin-bottom: 2px;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 18px 24px;
+            color: var(--dark);
+            text-decoration: none;
+            transition: var(--transition);
+            position: relative;
+            border-left: 3px solid transparent;
+            cursor: pointer;
+        }
+
+        .menu-link:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-left-color: var(--primary);
+        }
+
+        .menu-link.active {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-left: 3px solid var(--primary);
+        }
+
+        .menu-icon {
+            width: 22px;
+            height: 22px;
+            margin-right: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .menu-text {
+            font-size: 16px;
+            font-weight: 500;
+            transition: var(--transition);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: var(--light-gray);
+        }
+
+        .submenu.open {
+            max-height: 300px;
+        }
+
+        .submenu-item {
+            list-style: none;
+        }
+
+        .submenu-link {
+            display: flex;
+            align-items: center;
+            padding: 16px 24px 16px 64px;
+            color: var(--gray);
+            text-decoration: none;
+            font-size: 15px;
+            transition: var(--transition);
+            border-left: 3px solid transparent;
+        }
+
+        .submenu-link:hover {
+            background: rgba(67, 97, 238, 0.08);
+            color: var(--primary);
+            border-left-color: var(--primary);
+        }
+
+        .submenu-link.active {
+            color: var(--primary);
+            background: rgba(67, 97, 238, 0.1);
+            border-left-color: var(--primary);
+            font-weight: 500;
+        }
+
+        .menu-arrow {
+            margin-left: auto;
+            transition: var(--transition);
+            font-size: 12px;
+            color: var(--gray);
+            flex-shrink: 0;
+        }
+
+        .menu-arrow.rotated {
+            transform: rotate(180deg);
+        }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 24px;
+            min-height: calc(100vh - var(--header-height));
+            transition: var(--transition);
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .page-description {
+            font-size: 16px;
+            color: var(--gray);
+            line-height: 1.6;
+        }
+
+        .config-form-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .form-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+        }
+
+        .form-card:hover {
+            box-shadow: var(--shadow);
+        }
+
+        .form-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--primary-light);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--primary-light);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .form-label .required {
+            color: var(--danger);
+            margin-left: 2px;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: var(--transition);
+            background: var(--white);
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .form-input:disabled, .form-select:disabled {
+            background: var(--light-gray);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .form-hint {
+            font-size: 13px;
+            color: var(--gray);
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: var(--light-gray);
+            color: var(--dark);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border-color);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: var(--white);
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: #06b056;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: flex-end;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 24px;
+            min-height: 400px;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--border-color);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 16px;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        .protocol-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .protocol-badge {
+            padding: 8px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            user-select: none;
+        }
+
+        .protocol-badge:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .protocol-badge.selected {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
+        .code-selector {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .code-info {
+            display: none;
+            background: var(--light-gray);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .code-info.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .code-info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .code-info-label {
+            font-weight: 600;
+            color: var(--dark);
+            min-width: 80px;
+        }
+
+        .code-info-value {
+            color: var(--gray);
+        }
+
+        .port-selector {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .port-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .port-option {
+            padding: 6px 12px;
+            background: var(--light-gray);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .port-option:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .port-option.selected {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--border-color);
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(30px);
+        }
+
+        .toggle-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .toggle-text {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .notification {
+            position: fixed;
+            top: 80px;
+            right: 24px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-weight: 500;
+            z-index: 2000;
+            box-shadow: var(--shadow);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .notification-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .notification-error {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--white);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 24px 32px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--gray);
+            cursor: pointer;
+            padding: 4px;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            color: var(--dark);
+        }
+
+        .modal-body {
+            padding: 32px;
+        }
+
+        .modal-footer {
+            padding: 24px 32px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--white);
+            animation: spin 1s linear infinite;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            color: var(--gray);
+            font-size: 12px;
+            background: var(--light-gray);
+        }
+
+        .sidebar-footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .sidebar-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .option-description {
+            font-size: 12px;
+            color: var(--gray);
+            font-style: italic;
+            margin-left: 8px;
+        }
+
+        .manual-mode-switch {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .manual-toggle {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .manual-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .manual-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--border-color);
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .manual-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .manual-slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .manual-slider:before {
+            transform: translateX(26px);
+        }
+
+        .manual-toggle-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        @media (max-width: 768px) {
+            .mobile-toggle {
+                display: block;
+            }
+
+            .greeting {
+                display: none;
+            }
+
+            .sidebar-container {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                width: 280px;
+                box-shadow: 2px 0 20px rgba(0, 0, 0, 0.15);
+            }
+
+            .sidebar-container.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+
+            .sidebar-overlay.open {
+                display: block;
+            }
+
+            .user-section {
+                gap: 12px;
+            }
+
+            .switch-account-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .form-actions .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="header-container">
+    <div class="logo-section">
+        <button class="mobile-toggle" id="sidebarToggle">☰</button>
+        <a href="/info" class="logo">
+            <div class="logo-icon">M</div>
+            <span class="logo-text">MoBoxFrp</span>
+        </a>
+    </div>
+
+    <div class="user-section">
+        <button class="switch-account-btn" id="switchAccountBtn">
+            <span>🔄</span>
+            <span>切换账号</span>
+        </button>
+        <span class="greeting" id="greetingText">早上好</span>
+        <div class="user-info" id="userInfo">
+            <div class="user-avatar" id="userAvatar">?</div>
+            <span class="user-name" id="userName">加载中...</span>
+        </div>
+    </div>
+</div>
+
+<div class="sidebar-container" id="sidebarContainer">
+    <ul class="sidebar-menu" id="sidebarMenu">
+        <!-- 默认菜单 -->
+        <li class="menu-item">
+            <a href="/info" class="menu-link">
+                <span class="menu-icon">🏠</span>
+                <span class="menu-text">客户端</span>
+            </a>
+        </li>
+        <li class="menu-item">
+            <a href="/config/create" class="menu-link active">
+                <span class="menu-icon">⚙️</span>
+                <span class="menu-text">创建配置</span>
+            </a>
+        </li>
+        <li class="menu-item">
+            <a href="/config/manage" class="menu-link">
+                <span class="menu-icon">📁</span>
+                <span class="menu-text">配置管理</span>
+            </a>
+        </li>
+    </ul>
+    <div class="sidebar-footer">
+        © 2024 MoBoxFrp
+    </div>
+</div>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="main-content" id="mainContent">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">创建隧道配置文件</h1>
+            <p class="page-description">基于穿透码或手动配置创建内网穿透隧道配置文件</p>
+        </div>
+    </div>
+
+    <div id="contentArea">
+        <div class="loading-container" id="loadingContent">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">正在加载穿透码列表...</div>
+        </div>
+    </div>
+</div>
+
+<!-- 登录模态框 -->
+<div class="modal-overlay" id="loginModalOverlay">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">登录</h3>
+            <button class="modal-close" id="loginModalClose">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="login-tabs">
+                <button class="login-tab active" data-type="phone">手机号登录</button>
+                <button class="login-tab" data-type="email">邮箱登录</button>
+            </div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label" id="accountLabel" for="account">手机号</label>
+                    <input type="text" class="form-input" id="account"
+                           placeholder="请输入手机号" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="password">密码</label>
+                    <input type="password" class="form-input" id="password"
+                           placeholder="请输入密码" required>
+                </div>
+                <div class="form-group">
+                    <div class="form-hint" style="color: var(--gray); font-size: 13px; margin-top: 8px;">
+                        登录后可创建和管理配置文件
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" id="loginCancelBtn">取消</button>
+            <button type="button" class="btn btn-primary" id="loginSubmitBtn">登录</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentUser = null;
+    let codesList = [];
+    let sidebarData = null;
+    let openedSubmenus = new Set();
+    let currentLoginType = 'phone';
+    let selectedCode = null;
+    let isManualMode = false;
+
+    // 协议类型
+    const protocols = [
+        { id: 'tcp', name: 'TCP', description: '传输控制协议，最常用的协议类型' },
+        { id: 'udp', name: 'UDP', description: '用户数据报协议，适用于实时应用' },
+        { id: 'xtcp', name: 'XTCP', description: '点对点穿透协议，需要双方都安装frp' },
+        { id: 'xudp', name: 'XUDP', description: '点对点UDP协议' }
+    ];
+
+    // 本地端口选项
+    const localPortOptions = [
+        { port: '25565', description: 'Minecraft Java版默认端口' },
+        { port: '19132', description: 'Minecraft Bedrock版默认端口' },
+        { port: '3389', description: 'Windows远程桌面(RDP)默认端口' },
+        { port: '22', description: 'SSH远程连接默认端口' }
+    ];
+
+    function getGreeting() {
+        const hour = new Date().getHours();
+        if (hour >= 5 && hour < 12) return '早上好';
+        if (hour >= 12 && hour < 14) return '中午好';
+        if (hour >= 14 && hour < 18) return '下午好';
+        if (hour >= 18 && hour < 24) return '晚上好';
+        return '凌晨好';
+    }
+
+    function showNotification(message, type = 'success') {
+        const existingNotification = document.querySelector('.notification');
+        if (existingNotification) {
+            existingNotification.remove();
+        }
+
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.textContent = message;
+
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 3000);
+    }
+
+    async function fetchUserInfo() {
+        try {
+            const response = await fetch('/API/UserInfo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({})
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                currentUser = result;
+                updateUserDisplay(result);
+                return result;
+            } else {
+                currentUser = null;
+                updateUserDisplay({ username: '未登录' });
+                return null;
+            }
+        } catch (error) {
+            console.error('获取用户信息失败:', error);
+            showNotification('网络错误，请稍后重试', 'error');
+            currentUser = null;
+            updateUserDisplay({ username: '加载失败' });
+            return null;
+        }
+    }
+
+    async function fetchCodes() {
+        try {
+            const response = await fetch('/API/Codes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({})
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                // 只返回running状态的穿透码
+                const runningCodes = (result.codes || []).filter(code => code.status === 'running');
+                codesList = runningCodes;
+                return runningCodes;
+            } else {
+                showNotification(`获取穿透码列表失败: ${result.message}`, 'error');
+                codesList = [];
+                return [];
+            }
+        } catch (error) {
+            console.error('获取穿透码列表失败:', error);
+            showNotification('网络错误，请稍后重试', 'error');
+            codesList = [];
+            return [];
+        }
+    }
+
+    async function fetchSidebar() {
+        try {
+            const response = await fetch('/API/Sidebar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({})
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                const menus = result.sidebars || [];
+                return menus;
+            } else {
+                console.warn('获取侧边栏失败:', result.message);
+                return [];
+            }
+        } catch (error) {
+            console.error('获取侧边栏失败:', error);
+            return [];
+        }
+    }
+
+    function renderSidebar(menus) {
+        const sidebarMenu = document.getElementById('sidebarMenu');
+        const currentPath = window.location.pathname;
+
+        if (!menus || menus.length === 0) {
+            return;
+        }
+
+        // 按order字段排序
+        const sortedMenus = [...menus].sort((a, b) => a.order - b.order);
+
+        let html = '';
+
+        sortedMenus.forEach(menu => {
+            // 检查当前菜单是否应该展开
+            const isMenuActive = isMenuActiveForPath(menu, currentPath);
+            const isSubmenuOpen = openedSubmenus.has(menu.id) || isMenuActive;
+
+            if (menu.type === 'single') {
+                const isActive = currentPath === menu.url;
+                html += `
+                    <li class="menu-item">
+                        <a href="${menu.url}" class="menu-link ${isActive ? 'active' : ''}"
+                           data-menu-id="${menu.id}" data-type="single">
+                            <span class="menu-icon">${menu.icon}</span>
+                            <span class="menu-text">${menu.name}</span>
+                        </a>
+                    </li>
+                `;
+            } else if (menu.type === 'group' && menu.submenus) {
+                // 对子菜单排序
+                const sortedSubmenus = [...menu.submenus].sort((a, b) => a.order - b.order);
+
+                html += `
+                    <li class="menu-item">
+                        <a href="javascript:void(0)" class="menu-link ${isMenuActive ? 'active' : ''}"
+                           data-menu-id="${menu.id}" data-type="group">
+                            <span class="menu-icon">${menu.icon}</span>
+                            <span class="menu-text">${menu.name}</span>
+                            <span class="menu-arrow ${isSubmenuOpen ? 'rotated' : ''}">▼</span>
+                        </a>
+                        <ul class="submenu ${isSubmenuOpen ? 'open' : ''}" id="submenu-${menu.id}">
+                `;
+
+                sortedSubmenus.forEach(submenu => {
+                    const isSubmenuActive = currentPath === submenu.url;
+                    html += `
+                        <li class="submenu-item">
+                            <a href="${submenu.url}" class="submenu-link ${isSubmenuActive ? 'active' : ''}"
+                               data-menu-id="${submenu.id}" data-parent-id="${menu.id}">
+                                ${submenu.name}
+                            </a>
+                        </li>
+                    `;
+                });
+
+                html += `
+                        </ul>
+                    </li>
+                `;
+            }
+        });
+
+        sidebarMenu.innerHTML = html;
+        bindSidebarEvents();
+    }
+
+    function isMenuActiveForPath(menu, currentPath) {
+        if (menu.type === 'single') {
+            return menu.url === currentPath;
+        } else if (menu.type === 'group' && menu.submenus) {
+            return menu.submenus.some(submenu => submenu.url === currentPath);
+        }
+        return false;
+    }
+
+    function bindSidebarEvents() {
+        // 处理分组菜单点击事件
+        document.querySelectorAll('.menu-link[data-type="group"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const menuId = this.getAttribute('data-menu-id');
+                const submenu = document.getElementById(`submenu-${menuId}`);
+                const arrow = this.querySelector('.menu-arrow');
+
+                if (submenu.classList.contains('open')) {
+                    submenu.classList.remove('open');
+                    arrow.classList.remove('rotated');
+                    openedSubmenus.delete(menuId);
+                } else {
+                    submenu.classList.add('open');
+                    arrow.classList.add('rotated');
+                    openedSubmenus.add(menuId);
+                }
+            });
+        });
+
+        // 处理单页菜单点击事件
+        document.querySelectorAll('.menu-link[data-type="single"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (this.classList.contains('active')) {
+                    e.preventDefault();
+                }
+                document.querySelectorAll('.menu-link.active').forEach(item => {
+                    item.classList.remove('active');
+                });
+                document.querySelectorAll('.submenu-link.active').forEach(item => {
+                    item.classList.remove('active');
+                });
+                this.classList.add('active');
+
+                if (window.innerWidth <= 768) {
+                    const sidebarContainer = document.getElementById('sidebarContainer');
+                    const sidebarOverlay = document.getElementById('sidebarOverlay');
+                    sidebarContainer.classList.remove('open');
+                    sidebarOverlay.classList.remove('open');
+                }
+            });
+        });
+
+        // 处理子菜单点击事件
+        document.querySelectorAll('.submenu-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (this.classList.contains('active')) {
+                    e.preventDefault();
+                    return;
+                }
+
+                document.querySelectorAll('.menu-link.active').forEach(item => {
+                    item.classList.remove('active');
+                });
+                document.querySelectorAll('.submenu-link.active').forEach(item => {
+                    item.classList.remove('active');
+                });
+
+                this.classList.add('active');
+
+                const parentId = this.getAttribute('data-parent-id');
+                const parentLink = document.querySelector(`.menu-link[data-menu-id="${parentId}"]`);
+                if (parentLink) {
+                    parentLink.classList.add('active');
+
+                    const submenu = document.getElementById(`submenu-${parentId}`);
+                    const arrow = parentLink.querySelector('.menu-arrow');
+                    if (submenu && !submenu.classList.contains('open')) {
+                        submenu.classList.add('open');
+                        arrow.classList.add('rotated');
+                        openedSubmenus.add(parentId);
+                    }
+                }
+
+                if (window.innerWidth <= 768) {
+                    const sidebarContainer = document.getElementById('sidebarContainer');
+                    const sidebarOverlay = document.getElementById('sidebarOverlay');
+                    sidebarContainer.classList.remove('open');
+                    sidebarOverlay.classList.remove('open');
+                }
+            });
+        });
+    }
+
+    function updateUserDisplay(user) {
+        const userName = user.username || '未登录';
+        document.getElementById('userName').textContent = userName;
+        document.getElementById('userAvatar').textContent = userName.charAt(0).toUpperCase();
+        document.getElementById('greetingText').textContent = getGreeting();
+
+        // 根据登录状态显示或隐藏切换账号按钮
+        const switchAccountBtn = document.getElementById('switchAccountBtn');
+        if (user.username && user.username !== '未登录' && user.username !== '加载失败') {
+            switchAccountBtn.style.display = 'flex';
+        } else {
+            switchAccountBtn.style.display = 'none';
+        }
+    }
+
+    function generateConfigId() {
+        return 'cfg' + Math.random().toString(36).substr(2, 6);
+    }
+
+    // 解析端口范围，将 "60000-60009" 解析为端口数组 [60000, 60001, ..., 60009]
+    function parsePortRange(portString) {
+        if (!portString) return [];
+
+        const ports = [];
+        const parts = portString.split(',');
+
+        for (const part of parts) {
+            const trimmedPart = part.trim();
+            if (trimmedPart.includes('-')) {
+                // 解析端口范围
+                const [start, end] = trimmedPart.split('-').map(num => parseInt(num.trim()));
+                if (!isNaN(start) && !isNaN(end) && start <= end) {
+                    for (let i = start; i <= end; i++) {
+                        if (i >= 1 && i <= 65535) {
+                            ports.push(i.toString());
+                        }
+                    }
+                }
+            } else {
+                // 单个端口
+                const port = parseInt(trimmedPart);
+                if (!isNaN(port) && port >= 1 && port <= 65535) {
+                    ports.push(port.toString());
+                }
+            }
+        }
+
+        return ports;
+    }
+
+    function renderConfigForm() {
+        const contentArea = document.getElementById('contentArea');
+
+        contentArea.innerHTML = `
+            <div class="config-form-container">
+                <div class="form-card">
+                    <form id="configForm">
+                        <!-- 基础配置部分 -->
+                        <div class="form-section">
+                            <div class="section-title">
+                                <span class="section-title-icon">🔧</span>
+                                <span>基础配置</span>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label" for="configID">
+                                        配置文件ID <span class="required">*</span>
+                                    </label>
+                                    <input type="text" class="form-input" id="configID"
+                                           placeholder="请输入配置文件ID"
+                                           value="${generateConfigId()}" required>
+                                    <div class="form-hint">配置文件的唯一标识符</div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="configName">
+                                        配置文件名称 <span class="required">*</span>
+                                    </label>
+                                    <input type="text" class="form-input" id="configName"
+                                           placeholder="例如：我的Minecraft服务器" required>
+                                    <div class="form-hint">便于识别的配置文件名称</div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="protocolSelect">
+                                        协议类型 <span class="required">*</span>
+                                    </label>
+                                    <div class="protocol-badges" id="protocolBadges">
+                                        ${protocols.map(proto => `
+                                            <div class="protocol-badge ${proto.id === 'tcp' ? 'selected' : ''}"
+                                                 data-protocol="${proto.id}"
+                                                 data-description="${proto.description}">
+                                                ${proto.name}
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                    <div class="form-hint" id="protocolDescription">传输控制协议，最常用的协议类型</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 服务器配置部分 -->
+                        <div class="form-section">
+                            <div class="section-title">
+                                <span class="section-title-icon">🌐</span>
+                                <span>服务器配置</span>
+                            </div>
+
+                            <!-- 手动模式开关 -->
+                            <div class="manual-mode-switch">
+                                <label class="manual-toggle">
+                                    <input type="checkbox" id="manualModeToggle">
+                                    <span class="manual-slider"></span>
+                                </label>
+                                <span class="manual-toggle-text">手动配置服务器信息</span>
+                            </div>
+
+                            <!-- 自动选择模式 -->
+                            <div id="autoModeSection">
+                                <div class="form-group">
+                                    <label class="form-label" for="codeSelect">
+                                        选择穿透码
+                                    </label>
+                                    <select class="form-select" id="codeSelect">
+                                        <option value="">请选择穿透码（可选）</option>
+                                        ${codesList.map(code => `
+                                            <option value="${code.codeID}"
+                                                    data-token="${code.token}"
+                                                    data-node="${code.node}"
+                                                    data-server-port="${code.portServer}"
+                                                    data-open-ports="${code.portOpen}"
+                                                    data-band="${code.band}">
+                                                编号: ${code.number} | 节点: ${code.node} | 带宽: ${code.band}Mbps
+                                            </option>
+                                        `).join('')}
+                                    </select>
+                                    <div class="form-hint">可选的，选择一个运行中的穿透码自动填充服务器信息</div>
+                                </div>
+
+                                <!-- 开放端口选择（只在选择了穿透码时显示） -->
+                                <div class="form-group" id="openPortGroup" style="display: none;">
+                                    <label class="form-label" for="openPort">
+                                        选择开放端口 <span class="required">*</span>
+                                    </label>
+                                    <select class="form-select" id="openPort">
+                                        <option value="">请选择开放端口</option>
+                                    </select>
+                                    <div class="form-hint">从穿透码的可用端口中选择一个</div>
+                                </div>
+
+                                <div class="code-info" id="codeInfo">
+                                    <div class="code-info-item">
+                                        <span class="code-info-label">节点:</span>
+                                        <span class="code-info-value" id="codeNode">-</span>
+                                    </div>
+                                    <div class="code-info-item">
+                                        <span class="code-info-label">带宽:</span>
+                                        <span class="code-info-value" id="codeBand">-</span>
+                                    </div>
+                                    <div class="code-info-item">
+                                        <span class="code-info-label">服务端口:</span>
+                                        <span class="code-info-value" id="codeServerPort">-</span>
+                                    </div>
+                                    <div class="code-info-item">
+                                        <span class="code-info-label">可用端口:</span>
+                                        <span class="code-info-value" id="codeOpenPorts">-</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 手动配置模式 -->
+                            <div id="manualModeSection" style="display: none;">
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label class="form-label" for="manualToken">
+                                            Token <span class="required">*</span>
+                                        </label>
+                                        <input type="text" class="form-input" id="manualToken"
+                                               placeholder="请输入穿透码Token">
+                                        <div class="form-hint">穿透码的Token字符串</div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="form-label" for="manualServerAddress">
+                                            服务器地址 <span class="required">*</span>
+                                        </label>
+                                        <input type="text" class="form-input" id="manualServerAddress"
+                                               placeholder="例如：sz1.moboxfrp.cn">
+                                        <div class="form-hint">服务器地址，通常为 节点.moboxfrp.cn</div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="form-label" for="manualServerPort">
+                                            服务器端口 <span class="required">*</span>
+                                        </label>
+                                        <input type="text" class="form-input" id="manualServerPort"
+                                               placeholder="例如：55446">
+                                        <div class="form-hint">服务器连接端口</div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="form-label" for="manualOpenPort">
+                                            开放端口 <span class="required">*</span>
+                                        </label>
+                                        <input type="text" class="form-input" id="manualOpenPort"
+                                               placeholder="例如：60000">
+                                        <div class="form-hint">用于公网访问的端口</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 本地配置部分 -->
+                        <div class="form-section">
+                            <div class="section-title">
+                                <span class="section-title-icon">💻</span>
+                                <span>本地配置</span>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label" for="localAddress">
+                                        本地地址 <span class="required">*</span>
+                                    </label>
+                                    <input type="text" class="form-input" id="localAddress"
+                                           value="127.0.0.1" required>
+                                    <div class="form-hint">需要穿透的本地服务地址，通常为127.0.0.1</div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="localPort">
+                                        本地端口 <span class="required">*</span>
+                                    </label>
+                                    <select class="form-select" id="localPort" required>
+                                        <option value="">请选择本地端口</option>
+                                        ${localPortOptions.map(option => `
+                                            <option value="${option.port}">
+                                                ${option.port}
+                                                <span class="option-description">- ${option.description}</span>
+                                            </option>
+                                        `).join('')}
+                                        <option value="custom">自定义端口</option>
+                                    </select>
+                                    <div class="form-hint">需要穿透的本地服务端口</div>
+                                    <input type="number" class="form-input" id="customLocalPort"
+                                           placeholder="请输入自定义端口" min="1" max="65535" style="display: none; margin-top: 8px;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 高级配置部分 -->
+                        <div class="form-section">
+                            <div class="section-title">
+                                <span class="section-title-icon">⚡</span>
+                                <span>高级配置</span>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <div class="toggle-label">
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="compress" checked>
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                        <span class="toggle-text">流量压缩</span>
+                                    </div>
+                                    <div class="form-hint">启用后会对传输的数据进行压缩，节省流量</div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="toggle-label">
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="autoStart" checked>
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                        <span class="toggle-text">自动启动</span>
+                                    </div>
+                                    <div class="form-hint">启用后客户端启动时会自动建立此隧道</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" id="resetBtn">
+                                重置表单
+                            </button>
+                            <button type="button" class="btn btn-primary" id="submitBtn">
+                                创建配置文件
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        `;
+
+        bindFormEvents();
+    }
+
+    function bindFormEvents() {
+        // 手动模式切换
+        const manualModeToggle = document.getElementById('manualModeToggle');
+        const autoModeSection = document.getElementById('autoModeSection');
+        const manualModeSection = document.getElementById('manualModeSection');
+
+        manualModeToggle.addEventListener('change', function() {
+            isManualMode = this.checked;
+            if (isManualMode) {
+                autoModeSection.style.display = 'none';
+                manualModeSection.style.display = 'block';
+                // 清空自动选择的内容
+                document.getElementById('codeSelect').value = '';
+                document.getElementById('openPortGroup').style.display = 'none';
+                selectedCode = null;
+            } else {
+                autoModeSection.style.display = 'block';
+                manualModeSection.style.display = 'none';
+                // 清空手动输入的内容
+                document.getElementById('manualToken').value = '';
+                document.getElementById('manualServerAddress').value = '';
+                document.getElementById('manualServerPort').value = '';
+                document.getElementById('manualOpenPort').value = '';
+            }
+        });
+
+        // 穿透码选择事件
+        const codeSelect = document.getElementById('codeSelect');
+        const codeInfo = document.getElementById('codeInfo');
+        const openPortGroup = document.getElementById('openPortGroup');
+        const openPortSelect = document.getElementById('openPort');
+
+        codeSelect.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            if (selectedOption.value) {
+                // 获取选中的穿透码信息
+                const codeId = selectedOption.value;
+                const code = codesList.find(c => c.codeID === codeId);
+                selectedCode = code;
+
+                // 显示穿透码信息
+                codeInfo.classList.add('show');
+                document.getElementById('codeNode').textContent = code.node;
+                document.getElementById('codeBand').textContent = `${code.band} Mbps`;
+                document.getElementById('codeServerPort').textContent = code.portServer;
+
+                // 解析可用端口
+                const ports = parsePortRange(code.portOpen);
+                document.getElementById('codeOpenPorts').textContent = ports.join(', ');
+
+                // 显示并填充开放端口选择框
+                openPortGroup.style.display = 'block';
+                openPortSelect.innerHTML = '<option value="">请选择开放端口</option>';
+                ports.forEach(port => {
+                    const option = document.createElement('option');
+                    option.value = port;
+                    option.textContent = port;
+                    openPortSelect.appendChild(option);
+                });
+            } else {
+                selectedCode = null;
+                codeInfo.classList.remove('show');
+                openPortGroup.style.display = 'none';
+                openPortSelect.innerHTML = '<option value="">请选择开放端口</option>';
+            }
+        });
+
+        // 协议选择事件
+        const protocolBadges = document.querySelectorAll('.protocol-badge');
+        const protocolDescription = document.getElementById('protocolDescription');
+
+        protocolBadges.forEach(badge => {
+            badge.addEventListener('click', function() {
+                protocolBadges.forEach(b => b.classList.remove('selected'));
+                this.classList.add('selected');
+                protocolDescription.textContent = this.dataset.description;
+            });
+        });
+
+        // 本地端口选择事件
+        const localPortSelect = document.getElementById('localPort');
+        const customLocalPortInput = document.getElementById('customLocalPort');
+
+        localPortSelect.addEventListener('change', function() {
+            if (this.value === 'custom') {
+                customLocalPortInput.style.display = 'block';
+                customLocalPortInput.required = true;
+                localPortSelect.required = false;
+            } else {
+                customLocalPortInput.style.display = 'none';
+                customLocalPortInput.required = false;
+                localPortSelect.required = true;
+            }
+        });
+
+        // 重置按钮
+        document.getElementById('resetBtn').addEventListener('click', resetForm);
+
+        // 提交按钮
+        document.getElementById('submitBtn').addEventListener('click', submitConfig);
+    }
+
+    function resetForm() {
+        if (confirm('确定要重置表单吗？所有输入的内容将被清空。')) {
+            document.getElementById('configID').value = generateConfigId();
+            document.getElementById('configName').value = '';
+
+            // 重置手动模式
+            document.getElementById('manualModeToggle').checked = false;
+            isManualMode = false;
+            document.getElementById('autoModeSection').style.display = 'block';
+            document.getElementById('manualModeSection').style.display = 'none';
+
+            // 重置自动选择
+            document.getElementById('codeSelect').value = '';
+            selectedCode = null;
+            document.getElementById('codeInfo').classList.remove('show');
+            document.getElementById('openPortGroup').style.display = 'none';
+            document.getElementById('openPort').innerHTML = '<option value="">请选择开放端口</option>';
+
+            // 重置手动输入
+            document.getElementById('manualToken').value = '';
+            document.getElementById('manualServerAddress').value = '';
+            document.getElementById('manualServerPort').value = '';
+            document.getElementById('manualOpenPort').value = '';
+
+            // 重置协议选择
+            document.querySelectorAll('.protocol-badge').forEach(badge => {
+                badge.classList.remove('selected');
+                if (badge.dataset.protocol === 'tcp') {
+                    badge.classList.add('selected');
+                }
+            });
+
+            // 重置本地配置
+            document.getElementById('localAddress').value = '127.0.0.1';
+            document.getElementById('localPort').value = '';
+            document.getElementById('customLocalPort').style.display = 'none';
+            document.getElementById('customLocalPort').value = '';
+            document.getElementById('customLocalPort').required = false;
+            document.getElementById('localPort').required = true;
+
+            // 重置开关
+            document.getElementById('compress').checked = true;
+            document.getElementById('autoStart').checked = true;
+
+            showNotification('表单已重置');
+        }
+    }
+
+    async function submitConfig() {
+        if (!currentUser || currentUser.username === '未登录') {
+            showNotification('请先登录后再创建配置文件', 'error');
+            showLoginModal();
+            return;
+        }
+
+        // 获取配置数据
+        const config = {
+            ID: document.getElementById('configID').value.trim(),
+            name: document.getElementById('configName').value.trim(),
+            localAddress: document.getElementById('localAddress').value.trim(),
+            protocol: document.querySelector('.protocol-badge.selected')?.dataset.protocol || 'tcp',
+            compress: document.getElementById('compress').checked,
+            autoStart: document.getElementById('autoStart').checked
+        };
+
+        // 获取本地端口
+        const localPortSelect = document.getElementById('localPort');
+        if (localPortSelect.value === 'custom') {
+            const customPort = document.getElementById('customLocalPort').value.trim();
+            if (!customPort) {
+                showNotification('请输入自定义本地端口', 'error');
+                document.getElementById('customLocalPort').focus();
+                return;
+            }
+            const portNum = parseInt(customPort);
+            if (isNaN(portNum) || portNum < 1 || portNum > 65535) {
+                showNotification('本地端口必须在1-65535之间', 'error');
+                document.getElementById('customLocalPort').focus();
+                return;
+            }
+            config.localPort = customPort;
+        } else {
+            config.localPort = localPortSelect.value;
+        }
+
+        // 验证基础配置
+        if (!config.ID) {
+            showNotification('请输入配置文件ID', 'error');
+            document.getElementById('configID').focus();
+            return;
+        }
+
+        if (!config.name) {
+            showNotification('请输入配置文件名称', 'error');
+            document.getElementById('configName').focus();
+            return;
+        }
+
+        if (!config.localAddress) {
+            showNotification('请输入本地地址', 'error');
+            document.getElementById('localAddress').focus();
+            return;
+        }
+
+        if (!config.localPort) {
+            showNotification('请选择或输入本地端口', 'error');
+            document.getElementById('localPort').focus();
+            return;
+        }
+
+        // 获取服务器配置
+        if (isManualMode) {
+            // 手动配置模式
+            config.token = document.getElementById('manualToken').value.trim();
+            config.serverAddress = document.getElementById('manualServerAddress').value.trim();
+            config.serverPort = document.getElementById('manualServerPort').value.trim();
+            config.openPort = document.getElementById('manualOpenPort').value.trim();
+        } else {
+            // 自动选择模式
+            if (selectedCode) {
+                // 使用穿透码的配置
+                config.token = selectedCode.token;
+                config.serverAddress = `${selectedCode.node}.moboxfrp.cn`;
+                config.serverPort = selectedCode.portServer;
+
+                // 获取选择的开放端口
+                const openPortSelect = document.getElementById('openPort');
+                if (openPortSelect && openPortSelect.value) {
+                    config.openPort = openPortSelect.value;
+                } else {
+                    showNotification('请从可用端口中选择一个开放端口', 'error');
+                    return;
+                }
+            } else {
+                // 未选择穿透码，使用手动输入（通过提示框）
+                config.token = prompt('请输入穿透码Token:');
+                if (!config.token) {
+                    showNotification('请输入穿透码Token', 'error');
+                    return;
+                }
+
+                config.serverAddress = prompt('请输入服务器地址 (如 sz1.moboxfrp.cn):');
+                if (!config.serverAddress) {
+                    showNotification('请输入服务器地址', 'error');
+                    return;
+                }
+
+                config.serverPort = prompt('请输入服务器端口:');
+                if (!config.serverPort) {
+                    showNotification('请输入服务器端口', 'error');
+                    return;
+                }
+
+                config.openPort = prompt('请输入开放端口:');
+                if (!config.openPort) {
+                    showNotification('请输入开放端口', 'error');
+                    return;
+                }
+            }
+        }
+
+        // 验证服务器配置
+        if (!config.token) {
+            showNotification('请输入Token', 'error');
+            return;
+        }
+
+        if (!config.serverAddress) {
+            showNotification('请输入服务器地址', 'error');
+            return;
+        }
+
+        if (!config.serverPort) {
+            showNotification('请输入服务器端口', 'error');
+            return;
+        }
+
+        if (!config.openPort) {
+            showNotification('请输入开放端口', 'error');
+            return;
+        }
+
+        // 验证端口格式
+        const serverPortNum = parseInt(config.serverPort);
+        const openPortNum = parseInt(config.openPort);
+        if (isNaN(serverPortNum) || serverPortNum < 1 || serverPortNum > 65535) {
+            showNotification('服务器端口必须在1-65535之间', 'error');
+            return;
+        }
+        if (isNaN(openPortNum) || openPortNum < 1 || openPortNum > 65535) {
+            showNotification('开放端口必须在1-65535之间', 'error');
+            return;
+        }
+
+        // 禁用提交按钮并显示加载状态
+        const submitBtn = document.getElementById('submitBtn');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<span class="spinner"></span><span class="btn-text">创建中...</span>';
+        submitBtn.disabled = true;
+
+        try {
+            const response = await fetch('/API/Config/Create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(config)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showNotification('配置文件创建成功！请到配置文件管理页面查看。');
+
+                // 创建成功后的提示
+                setTimeout(() => {
+                    if (confirm('配置文件创建成功！是否要前往配置文件管理页面？')) {
+                        window.location.href = '/services/configManager';
+                    }
+                }, 500);
+            } else {
+                showNotification(`创建失败: ${result.message}`, 'error');
+            }
+        } catch (error) {
+            console.error('创建配置文件失败:', error);
+            showNotification('网络错误，请稍后重试', 'error');
+        } finally {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    }
+
+    function showLoginModal() {
+        document.getElementById('account').value = '';
+        document.getElementById('password').value = '';
+        document.getElementById('loginModalOverlay').classList.add('active');
+        document.getElementById('account').focus();
+    }
+
+    function closeLoginModal() {
+        document.getElementById('loginModalOverlay').classList.remove('active');
+    }
+
+    async function handleLogin() {
+        const account = document.getElementById('account').value.trim();
+        const password = document.getElementById('password').value.trim();
+
+        if (!account) {
+            showNotification(`请输入${currentLoginType === 'phone' ? '手机号' : '邮箱'}`, 'error');
+            return;
+        }
+
+        if (!password) {
+            showNotification('请输入密码', 'error');
+            return;
+        }
+
+        const submitBtn = document.getElementById('loginSubmitBtn');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<span class="spinner"></span><span class="btn-text">登录中...</span>';
+        submitBtn.disabled = true;
+
+        try {
+            const response = await fetch('/API/Login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    loginType: currentLoginType,
+                    account: account,
+                    password: password
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showNotification('登录成功');
+                closeLoginModal();
+
+                // 重新获取用户信息和穿透码列表
+                const user = await fetchUserInfo();
+                const codes = await fetchCodes();
+
+                // 重新渲染表单
+                if (codes) {
+                    renderConfigForm();
+                }
+            } else {
+                showNotification(result.message || '登录失败', 'error');
+            }
+        } catch (error) {
+            console.error('登录失败:', error);
+            showNotification('网络错误，请稍后重试', 'error');
+        } finally {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    }
+
+    function initLoginTabs() {
+        const tabs = document.querySelectorAll('.login-tab');
+        const accountLabel = document.getElementById('accountLabel');
+        const accountInput = document.getElementById('account');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                currentLoginType = tab.getAttribute('data-type');
+
+                if (currentLoginType === 'phone') {
+                    accountLabel.textContent = '手机号';
+                    accountInput.placeholder = '请输入手机号';
+                } else {
+                    accountLabel.textContent = '邮箱';
+                    accountInput.placeholder = '请输入邮箱地址';
+                }
+            });
+        });
+    }
+
+    function initSidebarToggle() {
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebarContainer = document.getElementById('sidebarContainer');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        sidebarToggle.addEventListener('click', () => {
+            sidebarContainer.classList.toggle('open');
+            sidebarOverlay.classList.toggle('open');
+        });
+
+        sidebarOverlay.addEventListener('click', () => {
+            sidebarContainer.classList.remove('open');
+            sidebarOverlay.classList.remove('open');
+        });
+    }
+
+    function initEventListeners() {
+        // 切换账号按钮
+        document.getElementById('switchAccountBtn').addEventListener('click', showLoginModal);
+
+        // 登录相关事件
+        document.getElementById('loginModalClose').addEventListener('click', closeLoginModal);
+        document.getElementById('loginCancelBtn').addEventListener('click', closeLoginModal);
+        document.getElementById('loginSubmitBtn').addEventListener('click', handleLogin);
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            handleLogin();
+        });
+
+        // 模态框外部点击关闭
+        document.getElementById('loginModalOverlay').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('loginModalOverlay')) {
+                closeLoginModal();
+            }
+        });
+
+        // 密码输入框回车提交
+        document.getElementById('password').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                handleLogin();
+            }
+        });
+
+        // 用户信息点击事件
+        document.getElementById('userInfo').addEventListener('click', () => {
+            if (!currentUser || !currentUser.username || currentUser.username === '未登录') {
+                showLoginModal();
+            }
+        });
+
+        // 初始化登录标签页
+        initLoginTabs();
+    }
+
+    function handleResize() {
+        if (window.innerWidth > 768) {
+            const sidebarContainer = document.getElementById('sidebarContainer');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+            sidebarContainer.classList.remove('open');
+            sidebarOverlay.classList.remove('open');
+        }
+    }
+
+    async function initPage() {
+        document.getElementById('greetingText').textContent = getGreeting();
+
+        initSidebarToggle();
+        initEventListeners();
+
+        // 并发获取数据
+        const [user, sidebar, codes] = await Promise.all([
+            fetchUserInfo(),
+            fetchSidebar(),
+            fetchCodes()
+        ]);
+
+        // 渲染侧边栏
+        if (sidebar && sidebar.length > 0) {
+            renderSidebar(sidebar);
+        }
+
+        // 渲染配置表单
+        renderConfigForm();
+
+        window.addEventListener('resize', handleResize);
+
+        // 更新问候语
+        setInterval(() => {
+            document.getElementById('greetingText').textContent = getGreeting();
+        }, 30000);
+    }
+
+    document.addEventListener('DOMContentLoaded', initPage);
+</script>
+</body>
+</html>

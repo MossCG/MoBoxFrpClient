@@ -1,0 +1,1945 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:,">
+    <title>MoBoxFrp - 隧道管理</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --primary-light: rgba(67, 97, 238, 0.1);
+            --secondary: #7209b7;
+            --secondary-light: rgba(114, 9, 183, 0.1);
+            --success: #07c160;
+            --success-light: rgba(7, 193, 96, 0.1);
+            --warning: #f72585;
+            --warning-light: rgba(247, 37, 133, 0.1);
+            --danger: #ef233c;
+            --danger-light: rgba(239, 35, 60, 0.1);
+            --info: #4cc9f0;
+            --info-light: rgba(76, 201, 240, 0.1);
+            --white: #ffffff;
+            --dark: #212529;
+            --gray: #6c757d;
+            --light-gray: #f8f9fa;
+            --border-color: #e9ecef;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --sidebar-width: 260px;
+            --header-height: 60px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #f5f7ff 0%, #f0f2ff 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        .header-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: var(--white);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .greeting {
+            font-size: 14px;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--primary-light);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .user-info:hover {
+            background: rgba(67, 97, 238, 0.15);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .switch-account-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: var(--light-gray);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--gray);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .switch-account-btn:hover {
+            background: var(--border-color);
+            color: var(--dark);
+        }
+
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .sidebar-container {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: var(--white);
+            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            z-index: 999;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+            list-style: none;
+            margin: 0;
+            flex: 1;
+        }
+
+        .menu-item {
+            margin-bottom: 2px;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 18px 24px;
+            color: var(--dark);
+            text-decoration: none;
+            transition: var(--transition);
+            position: relative;
+            border-left: 3px solid transparent;
+            cursor: pointer;
+        }
+
+        .menu-link:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-left-color: var(--primary);
+        }
+
+        .menu-link.active {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-left: 3px solid var(--primary);
+        }
+
+        .menu-icon {
+            width: 22px;
+            height: 22px;
+            margin-right: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .menu-text {
+            font-size: 16px;
+            font-weight: 500;
+            transition: var(--transition);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: var(--light-gray);
+        }
+
+        .submenu.open {
+            max-height: 300px;
+        }
+
+        .submenu-item {
+            list-style: none;
+        }
+
+        .submenu-link {
+            display: flex;
+            align-items: center;
+            padding: 16px 24px 16px 64px;
+            color: var(--gray);
+            text-decoration: none;
+            font-size: 15px;
+            transition: var(--transition);
+            border-left: 3px solid transparent;
+        }
+
+        .submenu-link:hover {
+            background: rgba(67, 97, 238, 0.08);
+            color: var(--primary);
+            border-left-color: var(--primary);
+        }
+
+        .submenu-link.active {
+            color: var(--primary);
+            background: rgba(67, 97, 238, 0.1);
+            border-left-color: var(--primary);
+            font-weight: 500;
+        }
+
+        .menu-arrow {
+            margin-left: auto;
+            transition: var(--transition);
+            font-size: 12px;
+            color: var(--gray);
+            flex-shrink: 0;
+        }
+
+        .menu-arrow.rotated {
+            transform: rotate(180deg);
+        }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 24px;
+            min-height: calc(100vh - var(--header-height));
+            transition: var(--transition);
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .page-description {
+            font-size: 16px;
+            color: var(--gray);
+            line-height: 1.6;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: var(--light-gray);
+            color: var(--dark);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border-color);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: var(--white);
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: #06b056;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: var(--white);
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            background: #d90429;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: var(--white);
+        }
+
+        .btn-warning:hover:not(:disabled) {
+            background: #e0146c;
+        }
+
+        .btn-info {
+            background: var(--info);
+            color: var(--white);
+        }
+
+        .btn-info:hover:not(:disabled) {
+            background: #2dbde8;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 24px;
+            min-height: 400px;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--border-color);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 16px;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        .tunnels-container {
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        .tunnels-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--light-gray);
+        }
+
+        .tunnels-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .tunnels-count {
+            font-size: 14px;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        .tunnels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 24px;
+            padding: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .tunnels-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .tunnel-card {
+            background: var(--white);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .tunnel-card:hover {
+            box-shadow: var(--shadow);
+            transform: translateY(-2px);
+            border-color: var(--primary);
+        }
+
+        .tunnel-card-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--light-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tunnel-card-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tunnel-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--primary-light);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        .tunnel-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .tunnel-id {
+            font-size: 12px;
+            color: var(--gray);
+            background: var(--light-gray);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .tunnel-card-body {
+            padding: 20px;
+        }
+
+        .tunnel-details {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .tunnel-detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .tunnel-detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .tunnel-detail-label {
+            font-size: 13px;
+            color: var(--gray);
+            font-weight: 500;
+            min-width: 80px;
+        }
+
+        .tunnel-detail-value {
+            font-size: 13px;
+            color: var(--dark);
+            font-weight: 600;
+            text-align: right;
+            word-break: break-all;
+        }
+
+        .tunnel-actions {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 8px;
+            background: var(--light-gray);
+        }
+
+        .tunnel-actions .btn {
+            flex: 1;
+            padding: 8px 12px;
+            font-size: 12px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 24px;
+            color: var(--gray);
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+
+        .empty-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .empty-description {
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .protocol-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .protocol-tcp {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .protocol-udp {
+            background: var(--info-light);
+            color: var(--info);
+        }
+
+        .protocol-xtcp {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .protocol-xudp {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-running {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .status-stopped {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--border-color);
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(20px);
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--white);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 24px 32px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--gray);
+            cursor: pointer;
+            padding: 4px;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            color: var(--dark);
+        }
+
+        .modal-body {
+            padding: 32px;
+        }
+
+        .modal-footer {
+            padding: 24px 32px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .log-container {
+            background: var(--dark);
+            color: var(--white);
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            padding: 16px;
+            border-radius: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 16px;
+        }
+
+        .log-line {
+            margin-bottom: 4px;
+            word-break: break-all;
+            white-space: pre-wrap;
+        }
+
+        .log-line.info {
+            color: #4cc9f0;
+        }
+
+        .log-line.warning {
+            color: #f72585;
+        }
+
+        .log-line.error {
+            color: #ef233c;
+        }
+
+        .log-line.success {
+            color: #07c160;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: var(--transition);
+            background: var(--white);
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--white);
+            animation: spin 1s linear infinite;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            color: var(--gray);
+            font-size: 12px;
+            background: var(--light-gray);
+        }
+
+        .sidebar-footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .sidebar-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .notification {
+            position: fixed;
+            top: 80px;
+            right: 24px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-weight: 500;
+            z-index: 2000;
+            box-shadow: var(--shadow);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .notification-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .notification-error {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .notification-warning {
+            background-color: var(--warning);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-toggle {
+                display: block;
+            }
+
+            .greeting {
+                display: none;
+            }
+
+            .sidebar-container {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                width: 280px;
+                box-shadow: 2px 0 20px rgba(0, 0, 0, 0.15);
+            }
+
+            .sidebar-container.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+
+            .sidebar-overlay.open {
+                display: block;
+            }
+
+            .user-section {
+                gap: 12px;
+            }
+
+            .switch-account-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 16px;
+            }
+
+            .header-actions {
+                justify-content: flex-end;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .tunnels-grid {
+                padding: 16px;
+            }
+
+            .tunnel-card {
+                margin-bottom: 16px;
+            }
+
+            .tunnel-actions {
+                flex-wrap: wrap;
+            }
+
+            .tunnel-actions .btn {
+                flex: 1 0 calc(50% - 4px);
+            }
+        }
+
+        .log-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .log-refresh-btn {
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: var(--transition);
+        }
+
+        .log-refresh-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .log-empty {
+            text-align: center;
+            padding: 32px;
+            color: var(--gray);
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+<div class="header-container">
+    <div class="logo-section">
+        <button class="mobile-toggle" id="sidebarToggle">☰</button>
+        <a href="/info" class="logo">
+            <div class="logo-icon">M</div>
+            <span class="logo-text">MoBoxFrp</span>
+        </a>
+    </div>
+
+    <div class="user-section">
+        <button class="switch-account-btn" id="switchAccountBtn">
+            <span>🔄</span>
+            <span>切换账号</span>
+        </button>
+        <span class="greeting" id="greetingText">早上好</span>
+        <div class="user-info" id="userInfo">
+            <div class="user-avatar" id="userAvatar">?</div>
+            <span class="user-name" id="userName">加载中...</span>
+        </div>
+    </div>
+</div>
+
+<div class="sidebar-container" id="sidebarContainer">
+    <ul class="sidebar-menu" id="sidebarMenu">
+        <!-- 默认菜单 -->
+        <li class="menu-item">
+            <a href="/info" class="menu-link">
+                <span class="menu-icon">🏠</span>
+                <span class="menu-text">客户端</span>
+            </a>
+        </li>
+        <li class="menu-item">
+            <a href="/services/configCreate" class="menu-link">
+                <span class="menu-icon">⚙️</span>
+                <span class="menu-text">创建配置</span>
+            </a>
+        </li>
+        <li class="menu-item">
+            <a href="/config/manage" class="menu-link">
+                <span class="menu-icon">📁</span>
+                <span class="menu-text">配置管理</span>
+            </a>
+        </li>
+        <li class="menu-item">
+            <a href="/tunnel/manage" class="menu-link active">
+                <span class="menu-icon">🚀</span>
+                <span class="menu-text">隧道管理</span>
+            </a>
+        </li>
+    </ul>
+    <div class="sidebar-footer">
+        © 2024 MoBoxFrp
+    </div>
+</div>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="main-content" id="mainContent">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">隧道管理</h1>
+            <p class="page-description">查看、管理和监控您的运行中隧道</p>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-secondary" id="refreshBtn">🔄 刷新</button>
+        </div>
+    </div>
+
+    <div id="contentArea">
+        <div class="loading-container" id="loadingContent">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">正在加载隧道列表...</div>
+        </div>
+    </div>
+</div>
+
+<!-- 登录模态框 -->
+<div class="modal-overlay" id="loginModalOverlay">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">登录</h3>
+            <button class="modal-close" id="loginModalClose">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="login-tabs">
+                <button class="login-tab active" data-type="phone">手机号登录</button>
+                <button class="login-tab" data-type="email">邮箱登录</button>
+            </div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label" id="accountLabel" for="account">手机号</label>
+                    <input type="text" class="form-input" id="account"
+                           placeholder="请输入手机号" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="password">密码</label>
+                    <input type="password" class="form-input" id="password"
+                           placeholder="请输入密码" required>
+                </div>
+                <div class="form-group">
+                    <div class="form-hint" style="color: var(--gray); font-size: 13px; margin-top: 8px;">
+                        登录后可管理隧道
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" id="loginCancelBtn">取消</button>
+            <button type="button" class="btn btn-primary" id="loginSubmitBtn">登录</button>
+        </div>
+    </div>
+</div>
+
+<!-- 隧道日志模态框 -->
+<div class="modal-overlay" id="logModalOverlay">
+    <div class="modal" style="max-width: 900px;">
+        <div class="modal-header">
+            <h3 class="modal-title" id="logModalTitle">隧道日志</h3>
+            <button class="modal-close" id="logModalClose">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="log-controls">
+                <div>
+                    <span style="font-size: 14px; color: var(--gray);">隧道ID: <strong id="logTunnelId"></strong></span>
+                </div>
+                <button class="log-refresh-btn" id="logRefreshBtn">🔄 刷新日志</button>
+            </div>
+            <div class="log-container" id="logContent">
+                <!-- 日志内容将在这里显示 -->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" id="logCloseBtn">关闭</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentUser = null;
+    let tunnelsList = {};
+    let sidebarData = null;
+    let openedSubmenus = new Set();
+    let currentLoginType = 'phone';
+    let currentLogTunnelId = null;
+
+    function getGreeting() {
+        const hour = new Date().getHours();
+        if (hour >= 5 && hour < 12) return '早上好';
+        if (hour >= 12 && hour < 14) return '中午好';
+        if (hour >= 14 && hour < 18) return '下午好';
+        if (hour >= 18 && hour < 24) return '晚上好';
+        return '凌晨好';
+    }
+
+    function showNotification(message, type = 'success') {
+        const existingNotification = document.querySelector('.notification');
+        if (existingNotification) {
+            existingNotification.remove();
+        }
+
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.textContent = message;
+
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 3000);
+    }
+
+    async function fetchUserInfo() {
+        try {
+            const response = await fetch('/API/UserInfo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({})
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                currentUser = result;
+                updateUserDisplay(result);
+                return result;
+            } else {
+                currentUser = null;
+                updateUserDisplay({ username: '未登录' });
+                return null;
+            }
+        } catch (error) {
+            console.error('获取用户信息失败:', error);
+            showNotification('网络错误，请稍后重试', 'error');
+            currentUser = null;
+            updateUserDisplay({ username: '加载失败' });
+            return null;
+        }
+    }
+
+    async function fetchTunnels() {
+        try {
+            const response = await fetch('/API/Tunnel/Get', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({})
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                tunnelsList = result.tunnels || {};
+                return tunnelsList;
+            } else {
+                showNotification(`获取隧道列表失败: ${result.message}`, 'error');
+                tunnelsList = {};
+                return {};
+            }
+        } catch (error) {
+            console.error('获取隧道列表失败:', error);
+            showNotification('网络错误，请稍后重试', 'error');
+            tunnelsList = {};
+            return {};
+        }
+    }
+
+    async function stopTunnel(tunnelId) {
+        try {
+            const response = await fetch('/API/Tunnel/Stop', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ID: tunnelId
+                })
+            });
+
+            const result = await response.json();
+            return result;
+        } catch (error) {
+            console.error('停止隧道失败:', error);
+            return { success: false, message: '网络错误，请稍后重试' };
+        }
+    }
+
+    async function fetchTunnelLog(tunnelId) {
+        try {
+            const response = await fetch('/API/Tunnel/Log', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ID: tunnelId
+                })
+            });
+
+            const result = await response.json();
+            return result;
+        } catch (error) {
+            console.error('获取隧道日志失败:', error);
+            return { success: false, message: '网络错误，请稍后重试', log: '' };
+        }
+    }
+
+    async function fetchSidebar() {
+        try {
+            const response = await fetch('/API/Sidebar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({})
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                const menus = result.sidebars || [];
+                return menus;
+            } else {
+                console.warn('获取侧边栏失败:', result.message);
+                return [];
+            }
+        } catch (error) {
+            console.error('获取侧边栏失败:', error);
+            return [];
+        }
+    }
+
+    function renderSidebar(menus) {
+        const sidebarMenu = document.getElementById('sidebarMenu');
+        const currentPath = window.location.pathname;
+
+        if (!menus || menus.length === 0) {
+            return;
+        }
+
+        // 按order字段排序
+        const sortedMenus = [...menus].sort((a, b) => a.order - b.order);
+
+        let html = '';
+
+        sortedMenus.forEach(menu => {
+            // 检查当前菜单是否应该展开
+            const isMenuActive = isMenuActiveForPath(menu, currentPath);
+            const isSubmenuOpen = openedSubmenus.has(menu.id) || isMenuActive;
+
+            if (menu.type === 'single') {
+                const isActive = currentPath === menu.url;
+                html += `
+                    <li class="menu-item">
+                        <a href="${menu.url}" class="menu-link ${isActive ? 'active' : ''}"
+                           data-menu-id="${menu.id}" data-type="single">
+                            <span class="menu-icon">${menu.icon}</span>
+                            <span class="menu-text">${menu.name}</span>
+                        </a>
+                    </li>
+                `;
+            } else if (menu.type === 'group' && menu.submenus) {
+                // 对子菜单排序
+                const sortedSubmenus = [...menu.submenus].sort((a, b) => a.order - b.order);
+
+                html += `
+                    <li class="menu-item">
+                        <a href="javascript:void(0)" class="menu-link ${isMenuActive ? 'active' : ''}"
+                           data-menu-id="${menu.id}" data-type="group">
+                            <span class="menu-icon">${menu.icon}</span>
+                            <span class="menu-text">${menu.name}</span>
+                            <span class="menu-arrow ${isSubmenuOpen ? 'rotated' : ''}">▼</span>
+                        </a>
+                        <ul class="submenu ${isSubmenuOpen ? 'open' : ''}" id="submenu-${menu.id}">
+                `;
+
+                sortedSubmenus.forEach(submenu => {
+                    const isSubmenuActive = currentPath === submenu.url;
+                    html += `
+                        <li class="submenu-item">
+                            <a href="${submenu.url}" class="submenu-link ${isSubmenuActive ? 'active' : ''}"
+                               data-menu-id="${submenu.id}" data-parent-id="${menu.id}">
+                                ${submenu.name}
+                            </a>
+                        </li>
+                    `;
+                });
+
+                html += `
+                        </ul>
+                    </li>
+                `;
+            }
+        });
+
+        sidebarMenu.innerHTML = html;
+        bindSidebarEvents();
+    }
+
+    function isMenuActiveForPath(menu, currentPath) {
+        if (menu.type === 'single') {
+            return menu.url === currentPath;
+        } else if (menu.type === 'group' && menu.submenus) {
+            return menu.submenus.some(submenu => submenu.url === currentPath);
+        }
+        return false;
+    }
+
+    function bindSidebarEvents() {
+        // 处理分组菜单点击事件
+        document.querySelectorAll('.menu-link[data-type="group"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const menuId = this.getAttribute('data-menu-id');
+                const submenu = document.getElementById(`submenu-${menuId}`);
+                const arrow = this.querySelector('.menu-arrow');
+
+                if (submenu.classList.contains('open')) {
+                    submenu.classList.remove('open');
+                    arrow.classList.remove('rotated');
+                    openedSubmenus.delete(menuId);
+                } else {
+                    submenu.classList.add('open');
+                    arrow.classList.add('rotated');
+                    openedSubmenus.add(menuId);
+                }
+            });
+        });
+
+        // 处理单页菜单点击事件
+        document.querySelectorAll('.menu-link[data-type="single"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (this.classList.contains('active')) {
+                    e.preventDefault();
+                }
+                document.querySelectorAll('.menu-link.active').forEach(item => {
+                    item.classList.remove('active');
+                });
+                document.querySelectorAll('.submenu-link.active').forEach(item => {
+                    item.classList.remove('active');
+                });
+                this.classList.add('active');
+
+                if (window.innerWidth <= 768) {
+                    const sidebarContainer = document.getElementById('sidebarContainer');
+                    const sidebarOverlay = document.getElementById('sidebarOverlay');
+                    sidebarContainer.classList.remove('open');
+                    sidebarOverlay.classList.remove('open');
+                }
+            });
+        });
+
+        // 处理子菜单点击事件
+        document.querySelectorAll('.submenu-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (this.classList.contains('active')) {
+                    e.preventDefault();
+                    return;
+                }
+
+                document.querySelectorAll('.menu-link.active').forEach(item => {
+                    item.classList.remove('active');
+                });
+                document.querySelectorAll('.submenu-link.active').forEach(item => {
+                    item.classList.remove('active');
+                });
+
+                this.classList.add('active');
+
+                const parentId = this.getAttribute('data-parent-id');
+                const parentLink = document.querySelector(`.menu-link[data-menu-id="${parentId}"]`);
+                if (parentLink) {
+                    parentLink.classList.add('active');
+
+                    const submenu = document.getElementById(`submenu-${parentId}`);
+                    const arrow = parentLink.querySelector('.menu-arrow');
+                    if (submenu && !submenu.classList.contains('open')) {
+                        submenu.classList.add('open');
+                        arrow.classList.add('rotated');
+                        openedSubmenus.add(parentId);
+                    }
+                }
+
+                if (window.innerWidth <= 768) {
+                    const sidebarContainer = document.getElementById('sidebarContainer');
+                    const sidebarOverlay = document.getElementById('sidebarOverlay');
+                    sidebarContainer.classList.remove('open');
+                    sidebarOverlay.classList.remove('open');
+                }
+            });
+        });
+    }
+
+    function updateUserDisplay(user) {
+        const userName = user.username || '未登录';
+        document.getElementById('userName').textContent = userName;
+        document.getElementById('userAvatar').textContent = userName.charAt(0).toUpperCase();
+        document.getElementById('greetingText').textContent = getGreeting();
+
+        // 根据登录状态显示或隐藏切换账号按钮
+        const switchAccountBtn = document.getElementById('switchAccountBtn');
+        if (user.username && user.username !== '未登录' && user.username !== '加载失败') {
+            switchAccountBtn.style.display = 'flex';
+        } else {
+            switchAccountBtn.style.display = 'none';
+        }
+    }
+
+    function getProtocolBadge(protocol) {
+        switch(protocol) {
+            case 'tcp':
+                return '<span class="protocol-badge protocol-tcp">TCP</span>';
+            case 'udp':
+                return '<span class="protocol-badge protocol-udp">UDP</span>';
+            case 'xtcp':
+                return '<span class="protocol-badge protocol-xtcp">XTCP</span>';
+            case 'xudp':
+                return '<span class="protocol-badge protocol-xudp">XUDP</span>';
+            default:
+                return `<span class="protocol-badge protocol-tcp">${protocol}</span>`;
+        }
+    }
+
+    function getStatusBadge(status) {
+        if (status === true || status === 'true') {
+            return '<span class="status-badge status-running">运行中</span>';
+        } else {
+            return '<span class="status-badge status-stopped">已停止</span>';
+        }
+    }
+
+    function formatToken(token) {
+        if (!token) return '未知';
+        if (token.length <= 12) return token;
+        const firstPart = token.substring(0, 6);
+        const lastPart = token.substring(token.length - 6);
+        return `${firstPart}******${lastPart}`;
+    }
+
+    function formatLog(logText) {
+        if (!logText) return '<div class="log-empty">暂无日志</div>';
+
+        const lines = logText.split('\n');
+        let html = '';
+
+        lines.forEach(line => {
+            if (line.trim()) {
+                let logClass = 'info';
+                if (line.includes('ERROR') || line.includes('error')) {
+                    logClass = 'error';
+                } else if (line.includes('WARN') || line.includes('warning')) {
+                    logClass = 'warning';
+                } else if (line.includes('INFO') || line.includes('info')) {
+                    logClass = 'info';
+                } else if (line.includes('SUCCESS') || line.includes('success')) {
+                    logClass = 'success';
+                }
+
+                html += `<div class="log-line ${logClass}">${line}</div>`;
+            }
+        });
+
+        return html || '<div class="log-empty">暂无日志</div>';
+    }
+
+    function renderTunnelsList() {
+        const contentArea = document.getElementById('contentArea');
+        const tunnelKeys = Object.keys(tunnelsList);
+
+        if (tunnelKeys.length === 0) {
+            contentArea.innerHTML = `
+                <div class="tunnels-container">
+                    <div class="tunnels-header">
+                        <div>
+                            <div class="tunnels-title">隧道列表</div>
+                            <div class="tunnels-count">总计: 0 个隧道</div>
+                        </div>
+                    </div>
+                    <div class="empty-state">
+                        <div class="empty-icon">🚀</div>
+                        <div class="empty-title">暂无运行中的隧道</div>
+                        <div class="empty-description">您还没有启动任何隧道，请在配置管理页面启动隧道</div>
+                        <button class="btn btn-primary" onclick="window.location.href='/config/manage'" style="margin-top: 20px;">
+                            前往配置管理
+                        </button>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
+        const tunnelCards = tunnelKeys.map(tunnelId => {
+            const tunnel = tunnelsList[tunnelId];
+            return `
+                <div class="tunnel-card" data-tunnel-id="${tunnelId}">
+                    <div class="tunnel-card-header">
+                        <div class="tunnel-card-title">
+                            <div class="tunnel-icon">🚀</div>
+                            <div>
+                                <div class="tunnel-name">${tunnel.name || '未命名'}</div>
+                                <div class="tunnel-id">ID: ${tunnelId}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tunnel-card-body">
+                        <ul class="tunnel-details">
+                            <li class="tunnel-detail-item">
+                                <span class="tunnel-detail-label">协议类型</span>
+                                <span class="tunnel-detail-value">${getProtocolBadge(tunnel.protocol)}</span>
+                            </li>
+                            <li class="tunnel-detail-item">
+                                <span class="tunnel-detail-label">服务器地址</span>
+                                <span class="tunnel-detail-value">${tunnel.serverAddress || '未知'}</span>
+                            </li>
+                            <li class="tunnel-detail-item">
+                                <span class="tunnel-detail-label">服务器端口</span>
+                                <span class="tunnel-detail-value">${tunnel.serverPort || '未知'}</span>
+                            </li>
+                            <li class="tunnel-detail-item">
+                                <span class="tunnel-detail-label">开放端口</span>
+                                <span class="tunnel-detail-value">${tunnel.openPort || '未知'}</span>
+                            </li>
+                            <li class="tunnel-detail-item">
+                                <span class="tunnel-detail-label">本地地址</span>
+                                <span class="tunnel-detail-value">${tunnel.localAddress || '127.0.0.1'}</span>
+                            </li>
+                            <li class="tunnel-detail-item">
+                                <span class="tunnel-detail-label">本地端口</span>
+                                <span class="tunnel-detail-value">${tunnel.localPort || '未知'}</span>
+                            </li>
+                            <li class="tunnel-detail-item">
+                                <span class="tunnel-detail-label">流量压缩</span>
+                                <span class="tunnel-detail-value">${getStatusBadge(tunnel.compress)}</span>
+                            </li>
+                            <li class="tunnel-detail-item">
+                                <span class="tunnel-detail-label">自动启动</span>
+                                <span class="tunnel-detail-value">${getStatusBadge(tunnel.autoStart)}</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="tunnel-actions">
+                        <button class="btn btn-info" onclick="showTunnelLog('${tunnelId}')">📄 日志</button>
+                        <button class="btn btn-danger" onclick="stopTunnelAction('${tunnelId}')">⏹️ 停止</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        contentArea.innerHTML = `
+            <div class="tunnels-container">
+                <div class="tunnels-header">
+                    <div>
+                        <div class="tunnels-title">隧道列表</div>
+                        <div class="tunnels-count">总计: ${tunnelKeys.length} 个隧道</div>
+                    </div>
+                </div>
+                <div class="tunnels-grid">
+                    ${tunnelCards}
+                </div>
+            </div>
+        `;
+    }
+
+    async function showTunnelLog(tunnelId) {
+        currentLogTunnelId = tunnelId;
+        const tunnel = tunnelsList[tunnelId];
+        if (!tunnel) return;
+
+        document.getElementById('logModalTitle').textContent = `${tunnel.name || '未命名'} - 隧道日志`;
+        document.getElementById('logTunnelId').textContent = tunnelId;
+
+        // 清空之前的日志内容
+        document.getElementById('logContent').innerHTML = '<div class="log-empty">正在加载日志...</div>';
+
+        // 显示模态框
+        document.getElementById('logModalOverlay').classList.add('active');
+
+        // 加载日志
+        await loadTunnelLog();
+    }
+
+    async function loadTunnelLog() {
+        if (!currentLogTunnelId) return;
+
+        const logContent = document.getElementById('logContent');
+        logContent.innerHTML = '<div class="log-empty">正在加载日志...</div>';
+
+        try {
+            const result = await fetchTunnelLog(currentLogTunnelId);
+
+            if (result.success) {
+                logContent.innerHTML = formatLog(result.log || '');
+                // 自动滚动到底部
+                logContent.scrollTop = logContent.scrollHeight;
+            } else {
+                logContent.innerHTML = `<div class="log-empty">获取日志失败: ${result.message}</div>`;
+            }
+        } catch (error) {
+            console.error('加载日志失败:', error);
+            logContent.innerHTML = '<div class="log-empty">网络错误，请稍后重试</div>';
+        }
+    }
+
+    function closeLogModal() {
+        currentLogTunnelId = null;
+        document.getElementById('logModalOverlay').classList.remove('active');
+    }
+
+    async function stopTunnelAction(tunnelId) {
+        const tunnel = tunnelsList[tunnelId];
+        if (!tunnel) return;
+
+        if (!confirm(`确定要停止隧道 "${tunnel.name || tunnelId}" 吗？`)) {
+            return;
+        }
+
+        // 找到对应的按钮
+        const tunnelCard = document.querySelector(`.tunnel-card[data-tunnel-id="${tunnelId}"]`);
+        const stopBtn = tunnelCard ? tunnelCard.querySelector('.btn-danger') : null;
+
+        if (stopBtn) {
+            const originalText = stopBtn.innerHTML;
+            stopBtn.innerHTML = '<span class="spinner"></span><span class="btn-text">停止中...</span>';
+            stopBtn.disabled = true;
+
+            try {
+                const result = await stopTunnel(tunnelId);
+
+                if (result.success) {
+                    showNotification('隧道停止成功');
+
+                    // 重新获取隧道列表
+                    await fetchTunnels();
+                    renderTunnelsList();
+                } else {
+                    showNotification(`停止失败: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                console.error('停止隧道失败:', error);
+                showNotification('网络错误，请稍后重试', 'error');
+            } finally {
+                stopBtn.innerHTML = originalText;
+                stopBtn.disabled = false;
+            }
+        }
+    }
+
+    async function refreshTunnelsList() {
+        const refreshBtn = document.getElementById('refreshBtn');
+        const originalText = refreshBtn.innerHTML;
+        refreshBtn.innerHTML = '<span class="spinner"></span><span class="btn-text">刷新中...</span>';
+        refreshBtn.disabled = true;
+
+        await fetchTunnels();
+        renderTunnelsList();
+
+        refreshBtn.innerHTML = originalText;
+        refreshBtn.disabled = false;
+        showNotification('列表已刷新');
+    }
+
+    function showLoginModal() {
+        document.getElementById('account').value = '';
+        document.getElementById('password').value = '';
+        document.getElementById('loginModalOverlay').classList.add('active');
+        document.getElementById('account').focus();
+    }
+
+    function closeLoginModal() {
+        document.getElementById('loginModalOverlay').classList.remove('active');
+    }
+
+    async function handleLogin() {
+        const account = document.getElementById('account').value.trim();
+        const password = document.getElementById('password').value.trim();
+
+        if (!account) {
+            showNotification(`请输入${currentLoginType === 'phone' ? '手机号' : '邮箱'}`, 'error');
+            return;
+        }
+
+        if (!password) {
+            showNotification('请输入密码', 'error');
+            return;
+        }
+
+        const submitBtn = document.getElementById('loginSubmitBtn');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<span class="spinner"></span><span class="btn-text">登录中...</span>';
+        submitBtn.disabled = true;
+
+        try {
+            const response = await fetch('/API/Login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    loginType: currentLoginType,
+                    account: account,
+                    password: password
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showNotification('登录成功');
+                closeLoginModal();
+
+                // 重新获取用户信息和隧道列表
+                const user = await fetchUserInfo();
+                const tunnels = await fetchTunnels();
+
+                if (tunnels) {
+                    renderTunnelsList();
+                }
+            } else {
+                showNotification(result.message || '登录失败', 'error');
+            }
+        } catch (error) {
+            console.error('登录失败:', error);
+            showNotification('网络错误，请稍后重试', 'error');
+        } finally {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    }
+
+    function initLoginTabs() {
+        const tabs = document.querySelectorAll('.login-tab');
+        const accountLabel = document.getElementById('accountLabel');
+        const accountInput = document.getElementById('account');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                currentLoginType = tab.getAttribute('data-type');
+
+                if (currentLoginType === 'phone') {
+                    accountLabel.textContent = '手机号';
+                    accountInput.placeholder = '请输入手机号';
+                } else {
+                    accountLabel.textContent = '邮箱';
+                    accountInput.placeholder = '请输入邮箱地址';
+                }
+            });
+        });
+    }
+
+    function initSidebarToggle() {
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebarContainer = document.getElementById('sidebarContainer');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        sidebarToggle.addEventListener('click', () => {
+            sidebarContainer.classList.toggle('open');
+            sidebarOverlay.classList.toggle('open');
+        });
+
+        sidebarOverlay.addEventListener('click', () => {
+            sidebarContainer.classList.remove('open');
+            sidebarOverlay.classList.remove('open');
+        });
+    }
+
+    function initEventListeners() {
+        // 切换账号按钮
+        document.getElementById('switchAccountBtn').addEventListener('click', showLoginModal);
+
+        // 刷新按钮
+        document.getElementById('refreshBtn').addEventListener('click', refreshTunnelsList);
+
+        // 登录相关事件
+        document.getElementById('loginModalClose').addEventListener('click', closeLoginModal);
+        document.getElementById('loginCancelBtn').addEventListener('click', closeLoginModal);
+        document.getElementById('loginSubmitBtn').addEventListener('click', handleLogin);
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            handleLogin();
+        });
+
+        // 日志模态框相关事件
+        document.getElementById('logModalClose').addEventListener('click', closeLogModal);
+        document.getElementById('logCloseBtn').addEventListener('click', closeLogModal);
+        document.getElementById('logRefreshBtn').addEventListener('click', loadTunnelLog);
+
+        // 模态框外部点击关闭
+        document.getElementById('loginModalOverlay').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('loginModalOverlay')) {
+                closeLoginModal();
+            }
+        });
+
+        document.getElementById('logModalOverlay').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('logModalOverlay')) {
+                closeLogModal();
+            }
+        });
+
+        // 密码输入框回车提交
+        document.getElementById('password').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                handleLogin();
+            }
+        });
+
+        // 用户信息点击事件
+        document.getElementById('userInfo').addEventListener('click', () => {
+            if (!currentUser || !currentUser.username || currentUser.username === '未登录') {
+                showLoginModal();
+            }
+        });
+
+        // 初始化登录标签页
+        initLoginTabs();
+    }
+
+    function handleResize() {
+        if (window.innerWidth > 768) {
+            const sidebarContainer = document.getElementById('sidebarContainer');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+            sidebarContainer.classList.remove('open');
+            sidebarOverlay.classList.remove('open');
+        }
+    }
+
+    async function initPage() {
+        document.getElementById('greetingText').textContent = getGreeting();
+
+        initSidebarToggle();
+        initEventListeners();
+
+        // 并发获取数据
+        const [user, sidebar] = await Promise.all([
+            fetchUserInfo(),
+            fetchSidebar()
+        ]);
+
+        // 获取隧道列表
+        const tunnels = await fetchTunnels();
+
+        // 渲染侧边栏
+        if (sidebar && sidebar.length > 0) {
+            renderSidebar(sidebar);
+        }
+
+        // 渲染隧道列表
+        renderTunnelsList();
+
+        window.addEventListener('resize', handleResize);
+
+        // 更新问候语
+        setInterval(() => {
+            document.getElementById('greetingText').textContent = getGreeting();
+        }, 30000);
+    }
+
+    document.addEventListener('DOMContentLoaded', initPage);
+</script>
+</body>
+</html>

@@ -1,0 +1,2240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:,">
+    <title>MoBoxFrp - 配置管理</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --primary-light: rgba(67, 97, 238, 0.1);
+            --secondary: #7209b7;
+            --secondary-light: rgba(114, 9, 183, 0.1);
+            --success: #07c160;
+            --success-light: rgba(7, 193, 96, 0.1);
+            --warning: #f72585;
+            --warning-light: rgba(247, 37, 133, 0.1);
+            --danger: #ef233c;
+            --danger-light: rgba(239, 35, 60, 0.1);
+            --info: #4cc9f0;
+            --info-light: rgba(76, 201, 240, 0.1);
+            --white: #ffffff;
+            --dark: #212529;
+            --gray: #6c757d;
+            --light-gray: #f8f9fa;
+            --border-color: #e9ecef;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --sidebar-width: 260px;
+            --header-height: 60px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #f5f7ff 0%, #f0f2ff 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        .header-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: var(--white);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .greeting {
+            font-size: 14px;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--primary-light);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .user-info:hover {
+            background: rgba(67, 97, 238, 0.15);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .switch-account-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: var(--light-gray);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--gray);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .switch-account-btn:hover {
+            background: var(--border-color);
+            color: var(--dark);
+        }
+
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .sidebar-container {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: var(--white);
+            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            z-index: 999;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+            list-style: none;
+            margin: 0;
+            flex: 1;
+        }
+
+        .menu-item {
+            margin-bottom: 2px;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 18px 24px;
+            color: var(--dark);
+            text-decoration: none;
+            transition: var(--transition);
+            position: relative;
+            border-left: 3px solid transparent;
+            cursor: pointer;
+        }
+
+        .menu-link:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-left-color: var(--primary);
+        }
+
+        .menu-link.active {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-left: 3px solid var(--primary);
+        }
+
+        .menu-icon {
+            width: 22px;
+            height: 22px;
+            margin-right: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .menu-text {
+            font-size: 16px;
+            font-weight: 500;
+            transition: var(--transition);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: var(--light-gray);
+        }
+
+        .submenu.open {
+            max-height: 300px;
+        }
+
+        .submenu-item {
+            list-style: none;
+        }
+
+        .submenu-link {
+            display: flex;
+            align-items: center;
+            padding: 16px 24px 16px 64px;
+            color: var(--gray);
+            text-decoration: none;
+            font-size: 15px;
+            transition: var(--transition);
+            border-left: 3px solid transparent;
+        }
+
+        .submenu-link:hover {
+            background: rgba(67, 97, 238, 0.08);
+            color: var(--primary);
+            border-left-color: var(--primary);
+        }
+
+        .submenu-link.active {
+            color: var(--primary);
+            background: rgba(67, 97, 238, 0.1);
+            border-left-color: var(--primary);
+            font-weight: 500;
+        }
+
+        .menu-arrow {
+            margin-left: auto;
+            transition: var(--transition);
+            font-size: 12px;
+            color: var(--gray);
+            flex-shrink: 0;
+        }
+
+        .menu-arrow.rotated {
+            transform: rotate(180deg);
+        }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 24px;
+            min-height: calc(100vh - var(--header-height));
+            transition: var(--transition);
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .page-description {
+            font-size: 16px;
+            color: var(--gray);
+            line-height: 1.6;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: var(--light-gray);
+            color: var(--dark);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border-color);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: var(--white);
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: #06b056;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: var(--white);
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            background: #d90429;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: var(--white);
+        }
+
+        .btn-warning:hover:not(:disabled) {
+            background: #e0146c;
+        }
+
+        .btn-info {
+            background: var(--info);
+            color: var(--white);
+        }
+
+        .btn-info:hover:not(:disabled) {
+            background: #2dbde8;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 24px;
+            min-height: 400px;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--border-color);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 16px;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        .configs-container {
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        .configs-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--light-gray);
+        }
+
+        .configs-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .configs-count {
+            font-size: 14px;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        .configs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 24px;
+            padding: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .configs-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .config-card {
+            background: var(--white);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .config-card:hover {
+            box-shadow: var(--shadow);
+            transform: translateY(-2px);
+            border-color: var(--primary);
+        }
+
+        .config-card-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--light-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .config-card-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .config-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--primary-light);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        .config-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .config-id {
+            font-size: 12px;
+            color: var(--gray);
+            background: var(--light-gray);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .config-card-body {
+            padding: 20px;
+        }
+
+        .config-details {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .config-detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .config-detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .config-detail-label {
+            font-size: 13px;
+            color: var(--gray);
+            font-weight: 500;
+            min-width: 80px;
+        }
+
+        .config-detail-value {
+            font-size: 13px;
+            color: var(--dark);
+            font-weight: 600;
+            text-align: right;
+            word-break: break-all;
+        }
+
+        .config-actions {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 8px;
+            background: var(--light-gray);
+        }
+
+        .config-actions .btn {
+            flex: 1;
+            padding: 8px 12px;
+            font-size: 12px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 24px;
+            color: var(--gray);
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+
+        .empty-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .empty-description {
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .protocol-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .protocol-tcp {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .protocol-udp {
+            background: var(--info-light);
+            color: var(--info);
+        }
+
+        .protocol-xtcp {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .protocol-xudp {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-on {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .status-off {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--border-color);
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(20px);
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--white);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 24px 32px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--gray);
+            cursor: pointer;
+            padding: 4px;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            color: var(--dark);
+        }
+
+        .modal-body {
+            padding: 32px;
+        }
+
+        .modal-footer {
+            padding: 24px 32px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: var(--transition);
+            background: var(--white);
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: var(--gray);
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        .form-warning {
+            background: var(--warning-light);
+            border-left: 4px solid var(--warning);
+            padding: 12px 16px;
+            border-radius: 4px;
+            margin-bottom: 24px;
+        }
+
+        .form-warning-text {
+            font-size: 13px;
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--white);
+            animation: spin 1s linear infinite;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            color: var(--gray);
+            font-size: 12px;
+            background: var(--light-gray);
+        }
+
+        .sidebar-footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .sidebar-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .notification {
+            position: fixed;
+            top: 80px;
+            right: 24px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-weight: 500;
+            z-index: 2000;
+            box-shadow: var(--shadow);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .notification-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .notification-error {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .notification-warning {
+            background-color: var(--warning);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-toggle {
+                display: block;
+            }
+
+            .greeting {
+                display: none;
+            }
+
+            .sidebar-container {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                width: 280px;
+                box-shadow: 2px 0 20px rgba(0, 0, 0, 0.15);
+            }
+
+            .sidebar-container.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+
+            .sidebar-overlay.open {
+                display: block;
+            }
+
+            .user-section {
+                gap: 12px;
+            }
+
+            .switch-account-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 16px;
+            }
+
+            .header-actions {
+                justify-content: flex-end;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .configs-grid {
+                padding: 16px;
+            }
+
+            .config-card {
+                margin-bottom: 16px;
+            }
+
+            .config-actions {
+                flex-wrap: wrap;
+            }
+
+            .config-actions .btn {
+                flex: 1 0 calc(50% - 4px);
+            }
+        }
+
+        .edit-form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .edit-form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="header-container">
+    <div class="logo-section">
+        <button class="mobile-toggle" id="sidebarToggle">☰</button>
+        <a href="/info" class="logo">
+            <div class="logo-icon">M</div>
+            <span class="logo-text">MoBoxFrp</span>
+        </a>
+    </div>
+
+    <div class="user-section">
+        <button class="switch-account-btn" id="switchAccountBtn">
+            <span>🔄</span>
+            <span>切换账号</span>
+        </button>
+        <span class="greeting" id="greetingText">早上好</span>
+        <div class="user-info" id="userInfo">
+            <div class="user-avatar" id="userAvatar">?</div>
+            <span class="user-name" id="userName">加载中...</span>
+        </div>
+    </div>
+</div>
+
+<div class="sidebar-container" id="sidebarContainer">
+    <ul class="sidebar-menu" id="sidebarMenu">
+        <!-- 默认菜单 -->
+        <li class="menu-item">
+            <a href="/info" class="menu-link">
+                <span class="menu-icon">🏠</span>
+                <span class="menu-text">客户端</span>
+            </a>
+        </li>
+        <li class="menu-item">
+            <a href="/services/configCreate" class="menu-link">
+                <span class="menu-icon">⚙️</span>
+                <span class="menu-text">创建配置</span>
+            </a>
+        </li>
+        <li class="menu-item">
+            <a href="/config/manage" class="menu-link active">
+                <span class="menu-icon">📁</span>
+                <span class="menu-text">配置管理</span>
+            </a>
+        </li>
+    </ul>
+    <div class="sidebar-footer">
+        © 2024 MoBoxFrp
+    </div>
+</div>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="main-content" id="mainContent">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">配置文件管理</h1>
+            <p class="page-description">查看、编辑和管理您的隧道配置文件</p>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-secondary" id="refreshBtn">🔄 刷新</button>
+            <button class="btn btn-primary" id="createBtn" onclick="window.location.href='/services/configCreate'">+ 新建配置</button>
+        </div>
+    </div>
+
+    <div id="contentArea">
+        <div class="loading-container" id="loadingContent">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">正在加载配置文件列表...</div>
+        </div>
+    </div>
+</div>
+
+<!-- 登录模态框 -->
+<div class="modal-overlay" id="loginModalOverlay">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">登录</h3>
+            <button class="modal-close" id="loginModalClose">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="login-tabs">
+                <button class="login-tab active" data-type="phone">手机号登录</button>
+                <button class="login-tab" data-type="email">邮箱登录</button>
+            </div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label" id="accountLabel" for="account">手机号</label>
+                    <input type="text" class="form-input" id="account"
+                           placeholder="请输入手机号" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="password">密码</label>
+                    <input type="password" class="form-input" id="password"
+                           placeholder="请输入密码" required>
+                </div>
+                <div class="form-group">
+                    <div class="form-hint" style="color: var(--gray); font-size: 13px; margin-top: 8px;">
+                        登录后可管理配置文件
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" id="loginCancelBtn">取消</button>
+            <button type="button" class="btn btn-primary" id="loginSubmitBtn">登录</button>
+        </div>
+    </div>
+</div>
+
+<!-- 删除确认模态框 -->
+<div class="modal-overlay" id="deleteModalOverlay">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">删除配置文件</h3>
+            <button class="modal-close" id="deleteModalClose">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>确定要删除配置文件 <strong id="deleteConfigName">example</strong> 吗？</p>
+            <p style="color: var(--warning); font-size: 14px; margin-top: 8px;">此操作不可恢复，请谨慎操作！</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" id="deleteCancelBtn">取消</button>
+            <button type="button" class="btn btn-danger" id="deleteConfirmBtn">确认删除</button>
+        </div>
+    </div>
+</div>
+
+<!-- 编辑配置模态框 -->
+<div class="modal-overlay" id="editModalOverlay">
+    <div class="modal" style="max-width: 700px;">
+        <div class="modal-header">
+            <h3 class="modal-title">编辑配置文件</h3>
+            <button class="modal-close" id="editModalClose">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-warning">
+                <div class="form-warning-text">⚠️ 警告：不熟悉 frp 配置的用户请勿随意修改，错误的配置可能导致隧道无法正常工作！</div>
+            </div>
+
+            <form id="editForm">
+                <div class="form-group">
+                    <label class="form-label">配置文件ID</label>
+                    <input type="text" class="form-input" id="editConfigId" readonly>
+                    <div class="form-hint">配置文件的唯一标识符，不可修改</div>
+                </div>
+
+                <div class="edit-form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="editName">配置文件名称</label>
+                        <input type="text" class="form-input" id="editName" placeholder="请输入配置文件名称">
+                        <div class="form-hint">便于识别的配置文件名称</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="editProtocol">协议类型</label>
+                        <select class="form-select" id="editProtocol">
+                            <option value="tcp">TCP</option>
+                            <option value="udp">UDP</option>
+                            <option value="xtcp">XTCP</option>
+                            <option value="xudp">XUDP</option>
+                        </select>
+                        <div class="form-hint">选择隧道协议类型</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="editToken">Token</label>
+                        <input type="text" class="form-input" id="editToken" placeholder="请输入穿透码Token">
+                        <div class="form-hint">穿透码的Token字符串</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="editServerAddress">服务器地址</label>
+                        <input type="text" class="form-input" id="editServerAddress" placeholder="例如：sz1.moboxfrp.cn">
+                        <div class="form-hint">服务器地址，通常为 节点.moboxfrp.cn</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="editServerPort">服务器端口</label>
+                        <input type="text" class="form-input" id="editServerPort" placeholder="例如：55446">
+                        <div class="form-hint">服务器连接端口</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="editOpenPort">开放端口</label>
+                        <input type="text" class="form-input" id="editOpenPort" placeholder="例如：60000">
+                        <div class="form-hint">用于公网访问的端口</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="editLocalAddress">本地地址</label>
+                        <input type="text" class="form-input" id="editLocalAddress" placeholder="例如：127.0.0.1">
+                        <div class="form-hint">需要穿透的本地服务地址</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="editLocalPort">本地端口</label>
+                        <input type="number" class="form-input" id="editLocalPort" placeholder="例如：25565" min="1" max="65535">
+                        <div class="form-hint">需要穿透的本地服务端口</div>
+                    </div>
+
+                    <div class="form-group">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-top: 24px;">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="editCompress">
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span style="font-size: 14px; font-weight: 600; color: var(--dark);">流量压缩</span>
+                        </div>
+                        <div class="form-hint">启用后会对传输的数据进行压缩，节省流量</div>
+                    </div>
+
+                    <div class="form-group">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-top: 24px;">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="editAutoStart">
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span style="font-size: 14px; font-weight: 600; color: var(--dark);">自动启动</span>
+                        </div>
+                        <div class="form-hint">启用后客户端启动时会自动建立此隧道</div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" id="editCancelBtn">取消</button>
+            <button type="button" class="btn btn-primary" id="editConfirmBtn">保存更改</button>
+        </div>
+    </div>
+</div>
+
+<!-- 配置详情模态框 -->
+<div class="modal-overlay" id="detailModalOverlay">
+    <div class="modal" style="max-width: 700px;">
+        <div class="modal-header">
+            <h3 class="modal-title">配置文件详情</h3>
+            <button class="modal-close" id="detailModalClose">&times;</button>
+        </div>
+        <div class="modal-body" id="detailModalBody">
+            <!-- 动态内容 -->
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" id="detailCloseBtn">关闭</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentUser = null;
+    let configsList = {};
+    let sidebarData = null;
+    let openedSubmenus = new Set();
+    let currentLoginType = 'phone';
+    let currentEditConfigId = null;
+    let currentDeleteConfigId = null;
+
+    function getGreeting() {
+        const hour = new Date().getHours();
+        if (hour >= 5 && hour < 12) return '早上好';
+        if (hour >= 12 && hour < 14) return '中午好';
+        if (hour >= 14 && hour < 18) return '下午好';
+        if (hour >= 18 && hour < 24) return '晚上好';
+        return '凌晨好';
+    }
+
+    function showNotification(message, type = 'success') {
+        const existingNotification = document.querySelector('.notification');
+        if (existingNotification) {
+            existingNotification.remove();
+        }
+
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.textContent = message;
+
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 3000);
+    }
+
+    async function fetchUserInfo() {
+        try {
+            const response = await fetch('/API/UserInfo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({})
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                currentUser = result;
+                updateUserDisplay(result);
+                return result;
+            } else {
+                currentUser = null;
+                updateUserDisplay({ username: '未登录' });
+                return null;
+            }
+        } catch (error) {
+            console.error('获取用户信息失败:', error);
+            showNotification('网络错误，请稍后重试', 'error');
+            currentUser = null;
+            updateUserDisplay({ username: '加载失败' });
+            return null;
+        }
+    }
+
+    async function fetchConfigs() {
+        try {
+            const response = await fetch('/API/Config/Get', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({})
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                configsList = result.configs || {};
+                return configsList;
+            } else {
+                showNotification(`获取配置列表失败: ${result.message}`, 'error');
+                configsList = {};
+                return {};
+            }
+        } catch (error) {
+            console.error('获取配置列表失败:', error);
+            showNotification('网络错误，请稍后重试', 'error');
+            configsList = {};
+            return {};
+        }
+    }
+
+    async function deleteConfig(configId) {
+        try {
+            const response = await fetch('/API/Config/Delete', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ID: configId
+                })
+            });
+
+            const result = await response.json();
+            return result;
+        } catch (error) {
+            console.error('删除配置失败:', error);
+            return { success: false, message: '网络错误，请稍后重试' };
+        }
+    }
+
+    async function editConfig(configId, key, value) {
+        try {
+            const response = await fetch('/API/Config/Edit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ID: configId,
+                    key: key,
+                    value: value
+                })
+            });
+
+            const result = await response.json();
+            return result;
+        } catch (error) {
+            console.error('编辑配置失败:', error);
+            return { success: false, message: '网络错误，请稍后重试' };
+        }
+    }
+
+    async function updateConfig(configId, configData) {
+        // 逐个更新每个配置项
+        const updates = [];
+        for (const [key, value] of Object.entries(configData)) {
+            updates.push(editConfig(configId, key, value));
+        }
+
+        const results = await Promise.all(updates);
+        return results.every(result => result.success);
+    }
+
+    async function startTunnel(configId) {
+        try {
+            const response = await fetch('/API/Tunnel/Start', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ID: configId
+                })
+            });
+
+            const result = await response.json();
+            return result;
+        } catch (error) {
+            console.error('启动隧道失败:', error);
+            return { success: false, message: '网络错误，请稍后重试' };
+        }
+    }
+
+    async function fetchSidebar() {
+        try {
+            const response = await fetch('/API/Sidebar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({})
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                const menus = result.sidebars || [];
+                return menus;
+            } else {
+                console.warn('获取侧边栏失败:', result.message);
+                return [];
+            }
+        } catch (error) {
+            console.error('获取侧边栏失败:', error);
+            return [];
+        }
+    }
+
+    function renderSidebar(menus) {
+        const sidebarMenu = document.getElementById('sidebarMenu');
+        const currentPath = window.location.pathname;
+
+        if (!menus || menus.length === 0) {
+            return;
+        }
+
+        // 按order字段排序
+        const sortedMenus = [...menus].sort((a, b) => a.order - b.order);
+
+        let html = '';
+
+        sortedMenus.forEach(menu => {
+            // 检查当前菜单是否应该展开
+            const isMenuActive = isMenuActiveForPath(menu, currentPath);
+            const isSubmenuOpen = openedSubmenus.has(menu.id) || isMenuActive;
+
+            if (menu.type === 'single') {
+                const isActive = currentPath === menu.url;
+                html += `
+                    <li class="menu-item">
+                        <a href="${menu.url}" class="menu-link ${isActive ? 'active' : ''}"
+                           data-menu-id="${menu.id}" data-type="single">
+                            <span class="menu-icon">${menu.icon}</span>
+                            <span class="menu-text">${menu.name}</span>
+                        </a>
+                    </li>
+                `;
+            } else if (menu.type === 'group' && menu.submenus) {
+                // 对子菜单排序
+                const sortedSubmenus = [...menu.submenus].sort((a, b) => a.order - b.order);
+
+                html += `
+                    <li class="menu-item">
+                        <a href="javascript:void(0)" class="menu-link ${isMenuActive ? 'active' : ''}"
+                           data-menu-id="${menu.id}" data-type="group">
+                            <span class="menu-icon">${menu.icon}</span>
+                            <span class="menu-text">${menu.name}</span>
+                            <span class="menu-arrow ${isSubmenuOpen ? 'rotated' : ''}">▼</span>
+                        </a>
+                        <ul class="submenu ${isSubmenuOpen ? 'open' : ''}" id="submenu-${menu.id}">
+                `;
+
+                sortedSubmenus.forEach(submenu => {
+                    const isSubmenuActive = currentPath === submenu.url;
+                    html += `
+                        <li class="submenu-item">
+                            <a href="${submenu.url}" class="submenu-link ${isSubmenuActive ? 'active' : ''}"
+                               data-menu-id="${submenu.id}" data-parent-id="${menu.id}">
+                                ${submenu.name}
+                            </a>
+                        </li>
+                    `;
+                });
+
+                html += `
+                        </ul>
+                    </li>
+                `;
+            }
+        });
+
+        sidebarMenu.innerHTML = html;
+        bindSidebarEvents();
+    }
+
+    function isMenuActiveForPath(menu, currentPath) {
+        if (menu.type === 'single') {
+            return menu.url === currentPath;
+        } else if (menu.type === 'group' && menu.submenus) {
+            return menu.submenus.some(submenu => submenu.url === currentPath);
+        }
+        return false;
+    }
+
+    function bindSidebarEvents() {
+        // 处理分组菜单点击事件
+        document.querySelectorAll('.menu-link[data-type="group"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const menuId = this.getAttribute('data-menu-id');
+                const submenu = document.getElementById(`submenu-${menuId}`);
+                const arrow = this.querySelector('.menu-arrow');
+
+                if (submenu.classList.contains('open')) {
+                    submenu.classList.remove('open');
+                    arrow.classList.remove('rotated');
+                    openedSubmenus.delete(menuId);
+                } else {
+                    submenu.classList.add('open');
+                    arrow.classList.add('rotated');
+                    openedSubmenus.add(menuId);
+                }
+            });
+        });
+
+        // 处理单页菜单点击事件
+        document.querySelectorAll('.menu-link[data-type="single"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (this.classList.contains('active')) {
+                    e.preventDefault();
+                }
+                document.querySelectorAll('.menu-link.active').forEach(item => {
+                    item.classList.remove('active');
+                });
+                document.querySelectorAll('.submenu-link.active').forEach(item => {
+                    item.classList.remove('active');
+                });
+                this.classList.add('active');
+
+                if (window.innerWidth <= 768) {
+                    const sidebarContainer = document.getElementById('sidebarContainer');
+                    const sidebarOverlay = document.getElementById('sidebarOverlay');
+                    sidebarContainer.classList.remove('open');
+                    sidebarOverlay.classList.remove('open');
+                }
+            });
+        });
+
+        // 处理子菜单点击事件
+        document.querySelectorAll('.submenu-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (this.classList.contains('active')) {
+                    e.preventDefault();
+                    return;
+                }
+
+                document.querySelectorAll('.menu-link.active').forEach(item => {
+                    item.classList.remove('active');
+                });
+                document.querySelectorAll('.submenu-link.active').forEach(item => {
+                    item.classList.remove('active');
+                });
+
+                this.classList.add('active');
+
+                const parentId = this.getAttribute('data-parent-id');
+                const parentLink = document.querySelector(`.menu-link[data-menu-id="${parentId}"]`);
+                if (parentLink) {
+                    parentLink.classList.add('active');
+
+                    const submenu = document.getElementById(`submenu-${parentId}`);
+                    const arrow = parentLink.querySelector('.menu-arrow');
+                    if (submenu && !submenu.classList.contains('open')) {
+                        submenu.classList.add('open');
+                        arrow.classList.add('rotated');
+                        openedSubmenus.add(parentId);
+                    }
+                }
+
+                if (window.innerWidth <= 768) {
+                    const sidebarContainer = document.getElementById('sidebarContainer');
+                    const sidebarOverlay = document.getElementById('sidebarOverlay');
+                    sidebarContainer.classList.remove('open');
+                    sidebarOverlay.classList.remove('open');
+                }
+            });
+        });
+    }
+
+    function updateUserDisplay(user) {
+        const userName = user.username || '未登录';
+        document.getElementById('userName').textContent = userName;
+        document.getElementById('userAvatar').textContent = userName.charAt(0).toUpperCase();
+        document.getElementById('greetingText').textContent = getGreeting();
+
+        // 根据登录状态显示或隐藏切换账号按钮
+        const switchAccountBtn = document.getElementById('switchAccountBtn');
+        if (user.username && user.username !== '未登录' && user.username !== '加载失败') {
+            switchAccountBtn.style.display = 'flex';
+        } else {
+            switchAccountBtn.style.display = 'none';
+        }
+    }
+
+    function getProtocolBadge(protocol) {
+        switch(protocol) {
+            case 'tcp':
+                return '<span class="protocol-badge protocol-tcp">TCP</span>';
+            case 'udp':
+                return '<span class="protocol-badge protocol-udp">UDP</span>';
+            case 'xtcp':
+                return '<span class="protocol-badge protocol-xtcp">XTCP</span>';
+            case 'xudp':
+                return '<span class="protocol-badge protocol-xudp">XUDP</span>';
+            default:
+                return `<span class="protocol-badge protocol-tcp">${protocol}</span>`;
+        }
+    }
+
+    function getStatusBadge(status) {
+        if (status === true || status === 'true') {
+            return '<span class="status-badge status-on">开启</span>';
+        } else {
+            return '<span class="status-badge status-off">关闭</span>';
+        }
+    }
+
+    function formatToken(token) {
+        if (!token) return '未知';
+        if (token.length <= 12) return token;
+        const firstPart = token.substring(0, 6);
+        const lastPart = token.substring(token.length - 6);
+        return `${firstPart}******${lastPart}`;
+    }
+
+    function renderConfigsList() {
+        const contentArea = document.getElementById('contentArea');
+        const configKeys = Object.keys(configsList);
+
+        if (configKeys.length === 0) {
+            contentArea.innerHTML = `
+                <div class="configs-container">
+                    <div class="configs-header">
+                        <div>
+                            <div class="configs-title">配置文件列表</div>
+                            <div class="configs-count">总计: 0 个配置文件</div>
+                        </div>
+                    </div>
+                    <div class="empty-state">
+                        <div class="empty-icon">📁</div>
+                        <div class="empty-title">暂无配置文件</div>
+                        <div class="empty-description">您还没有创建任何配置文件，点击上方按钮创建一个吧</div>
+                        <button class="btn btn-primary" onclick="window.location.href='/services/configCreate'" style="margin-top: 20px;">
+                            创建配置文件
+                        </button>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
+        const configCards = configKeys.map(configId => {
+            const config = configsList[configId];
+            return `
+                <div class="config-card" data-config-id="${configId}">
+                    <div class="config-card-header">
+                        <div class="config-card-title">
+                            <div class="config-icon">⚙️</div>
+                            <div>
+                                <div class="config-name">${config.name || '未命名'}</div>
+                                <div class="config-id">ID: ${configId}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="config-card-body">
+                        <ul class="config-details">
+                            <li class="config-detail-item">
+                                <span class="config-detail-label">协议类型</span>
+                                <span class="config-detail-value">${getProtocolBadge(config.protocol)}</span>
+                            </li>
+                            <li class="config-detail-item">
+                                <span class="config-detail-label">服务器地址</span>
+                                <span class="config-detail-value">${config.serverAddress || '未知'}</span>
+                            </li>
+                            <li class="config-detail-item">
+                                <span class="config-detail-label">服务器端口</span>
+                                <span class="config-detail-value">${config.serverPort || '未知'}</span>
+                            </li>
+                            <li class="config-detail-item">
+                                <span class="config-detail-label">开放端口</span>
+                                <span class="config-detail-value">${config.openPort || '未知'}</span>
+                            </li>
+                            <li class="config-detail-item">
+                                <span class="config-detail-label">本地地址</span>
+                                <span class="config-detail-value">${config.localAddress || '127.0.0.1'}</span>
+                            </li>
+                            <li class="config-detail-item">
+                                <span class="config-detail-label">本地端口</span>
+                                <span class="config-detail-value">${config.localPort || '未知'}</span>
+                            </li>
+                            <li class="config-detail-item">
+                                <span class="config-detail-label">流量压缩</span>
+                                <span class="config-detail-value">${getStatusBadge(config.compress)}</span>
+                            </li>
+                            <li class="config-detail-item">
+                                <span class="config-detail-label">自动启动</span>
+                                <span class="config-detail-value">${getStatusBadge(config.autoStart)}</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="config-actions">
+                        <button class="btn btn-info" onclick="showConfigDetail('${configId}')">👁️ 详情</button>
+                        <button class="btn btn-success" onclick="startTunnelAction('${configId}')">🚀 启动</button>
+                        <button class="btn btn-warning" onclick="showEditModal('${configId}')">✏️ 编辑</button>
+                        <button class="btn btn-danger" onclick="showDeleteModal('${configId}', '${config.name || configId}')">🗑️ 删除</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        contentArea.innerHTML = `
+            <div class="configs-container">
+                <div class="configs-header">
+                    <div>
+                        <div class="configs-title">配置文件列表</div>
+                        <div class="configs-count">总计: ${configKeys.length} 个配置文件</div>
+                    </div>
+                </div>
+                <div class="configs-grid">
+                    ${configCards}
+                </div>
+            </div>
+        `;
+    }
+
+    function showConfigDetail(configId) {
+        const config = configsList[configId];
+        if (!config) return;
+
+        const modalBody = document.getElementById('detailModalBody');
+
+        const detailContent = `
+            <div style="margin-bottom: 24px;">
+                <h4 style="color: var(--dark); margin-bottom: 16px;">${config.name || '未命名'} (ID: ${configId})</h4>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 24px;">
+                    <div style="padding: 12px; background: var(--light-gray); border-radius: 8px;">
+                        <div style="font-size: 12px; color: var(--gray); margin-bottom: 4px;">协议类型</div>
+                        <div style="font-size: 14px; font-weight: 600;">${getProtocolBadge(config.protocol)}</div>
+                    </div>
+                    <div style="padding: 12px; background: var(--light-gray); border-radius: 8px;">
+                        <div style="font-size: 12px; color: var(--gray); margin-bottom: 4px;">流量压缩</div>
+                        <div style="font-size: 14px; font-weight: 600;">${getStatusBadge(config.compress)}</div>
+                    </div>
+                    <div style="padding: 12px; background: var(--light-gray); border-radius: 8px;">
+                        <div style="font-size: 12px; color: var(--gray); margin-bottom: 4px;">自动启动</div>
+                        <div style="font-size: 14px; font-weight: 600;">${getStatusBadge(config.autoStart)}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 24px;">
+                <h5 style="color: var(--dark); margin-bottom: 12px;">服务器配置</h5>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                    <div>
+                        <div style="font-size: 12px; color: var(--gray); margin-bottom: 4px;">服务器地址</div>
+                        <div style="font-size: 14px; font-weight: 600;">${config.serverAddress || '未知'}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 12px; color: var(--gray); margin-bottom: 4px;">服务器端口</div>
+                        <div style="font-size: 14px; font-weight: 600;">${config.serverPort || '未知'}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 12px; color: var(--gray); margin-bottom: 4px;">开放端口</div>
+                        <div style="font-size: 14px; font-weight: 600;">${config.openPort || '未知'}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 12px; color: var(--gray); margin-bottom: 4px;">Token</div>
+                        <div style="font-size: 14px; font-weight: 600;">${formatToken(config.token || '')}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 24px;">
+                <h5 style="color: var(--dark); margin-bottom: 12px;">本地配置</h5>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                    <div>
+                        <div style="font-size: 12px; color: var(--gray); margin-bottom: 4px;">本地地址</div>
+                        <div style="font-size: 14px; font-weight: 600;">${config.localAddress || '127.0.0.1'}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 12px; color: var(--gray); margin-bottom: 4px;">本地端口</div>
+                        <div style="font-size: 14px; font-weight: 600;">${config.localPort || '未知'}</div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        modalBody.innerHTML = detailContent;
+        document.getElementById('detailModalOverlay').classList.add('active');
+    }
+
+    function showDeleteModal(configId, configName) {
+        currentDeleteConfigId = configId;
+        document.getElementById('deleteConfigName').textContent = configName;
+        document.getElementById('deleteModalOverlay').classList.add('active');
+    }
+
+    function closeDeleteModal() {
+        currentDeleteConfigId = null;
+        document.getElementById('deleteModalOverlay').classList.remove('active');
+    }
+
+    async function confirmDelete() {
+        if (!currentDeleteConfigId) return;
+
+        const deleteBtn = document.getElementById('deleteConfirmBtn');
+        const originalText = deleteBtn.innerHTML;
+        deleteBtn.innerHTML = '<span class="spinner"></span><span class="btn-text">删除中...</span>';
+        deleteBtn.disabled = true;
+
+        try {
+            const result = await deleteConfig(currentDeleteConfigId);
+
+            if (result.success) {
+                showNotification('配置文件删除成功');
+                closeDeleteModal();
+
+                // 重新获取配置列表
+                await fetchConfigs();
+                renderConfigsList();
+            } else {
+                showNotification(`删除失败: ${result.message}`, 'error');
+            }
+        } catch (error) {
+            console.error('删除配置失败:', error);
+            showNotification('网络错误，请稍后重试', 'error');
+        } finally {
+            deleteBtn.innerHTML = originalText;
+            deleteBtn.disabled = false;
+        }
+    }
+
+    function showEditModal(configId) {
+        currentEditConfigId = configId;
+        const config = configsList[configId];
+        if (!config) return;
+
+        // 填充表单数据
+        document.getElementById('editConfigId').value = configId;
+        document.getElementById('editName').value = config.name || '';
+        document.getElementById('editProtocol').value = config.protocol || 'tcp';
+        document.getElementById('editToken').value = config.token || '';
+        document.getElementById('editServerAddress').value = config.serverAddress || '';
+        document.getElementById('editServerPort').value = config.serverPort || '';
+        document.getElementById('editOpenPort').value = config.openPort || '';
+        document.getElementById('editLocalAddress').value = config.localAddress || '127.0.0.1';
+        document.getElementById('editLocalPort').value = config.localPort || '';
+        document.getElementById('editCompress').checked = config.compress === true || config.compress === 'true';
+        document.getElementById('editAutoStart').checked = config.autoStart === true || config.autoStart === 'true';
+
+        document.getElementById('editModalOverlay').classList.add('active');
+    }
+
+    function closeEditModal() {
+        currentEditConfigId = null;
+        document.getElementById('editModalOverlay').classList.remove('active');
+    }
+
+    async function confirmEdit() {
+        if (!currentEditConfigId) return;
+
+        const config = configsList[currentEditConfigId];
+        if (!config) return;
+
+        // 收集所有表单数据
+        const updatedConfig = {
+            name: document.getElementById('editName').value.trim(),
+            protocol: document.getElementById('editProtocol').value,
+            token: document.getElementById('editToken').value.trim(),
+            serverAddress: document.getElementById('editServerAddress').value.trim(),
+            serverPort: document.getElementById('editServerPort').value.trim(),
+            openPort: document.getElementById('editOpenPort').value.trim(),
+            localAddress: document.getElementById('editLocalAddress').value.trim(),
+            localPort: document.getElementById('editLocalPort').value.trim(),
+            compress: document.getElementById('editCompress').checked,
+            autoStart: document.getElementById('editAutoStart').checked
+        };
+
+        // 验证必填字段
+        if (!updatedConfig.name) {
+            showNotification('配置文件名称不能为空', 'error');
+            return;
+        }
+
+        if (!updatedConfig.token) {
+            showNotification('Token不能为空', 'error');
+            return;
+        }
+
+        if (!updatedConfig.serverAddress) {
+            showNotification('服务器地址不能为空', 'error');
+            return;
+        }
+
+        if (!updatedConfig.serverPort) {
+            showNotification('服务器端口不能为空', 'error');
+            return;
+        }
+
+        if (!updatedConfig.openPort) {
+            showNotification('开放端口不能为空', 'error');
+            return;
+        }
+
+        if (!updatedConfig.localAddress) {
+            showNotification('本地地址不能为空', 'error');
+            return;
+        }
+
+        if (!updatedConfig.localPort) {
+            showNotification('本地端口不能为空', 'error');
+            return;
+        }
+
+        // 验证端口格式
+        const serverPortNum = parseInt(updatedConfig.serverPort);
+        const openPortNum = parseInt(updatedConfig.openPort);
+        const localPortNum = parseInt(updatedConfig.localPort);
+
+        if (isNaN(serverPortNum) || serverPortNum < 1 || serverPortNum > 65535) {
+            showNotification('服务器端口必须在1-65535之间', 'error');
+            return;
+        }
+        if (isNaN(openPortNum) || openPortNum < 1 || openPortNum > 65535) {
+            showNotification('开放端口必须在1-65535之间', 'error');
+            return;
+        }
+        if (isNaN(localPortNum) || localPortNum < 1 || localPortNum > 65535) {
+            showNotification('本地端口必须在1-65535之间', 'error');
+            return;
+        }
+
+        const editBtn = document.getElementById('editConfirmBtn');
+        const originalText = editBtn.innerHTML;
+        editBtn.innerHTML = '<span class="spinner"></span><span class="btn-text">保存中...</span>';
+        editBtn.disabled = true;
+
+        try {
+            // 批量更新配置
+            const success = await updateConfig(currentEditConfigId, updatedConfig);
+
+            if (success) {
+                showNotification('配置更新成功');
+                closeEditModal();
+
+                // 重新获取配置列表
+                await fetchConfigs();
+                renderConfigsList();
+            } else {
+                showNotification('部分配置更新失败，请检查网络连接', 'error');
+            }
+        } catch (error) {
+            console.error('更新配置失败:', error);
+            showNotification('网络错误，请稍后重试', 'error');
+        } finally {
+            editBtn.innerHTML = originalText;
+            editBtn.disabled = false;
+        }
+    }
+
+    async function startTunnelAction(configId) {
+        const config = configsList[configId];
+        if (!config) return;
+
+        // 找到对应的按钮
+        const configCard = document.querySelector(`.config-card[data-config-id="${configId}"]`);
+        const startBtn = configCard ? configCard.querySelector('.btn-success') : null;
+
+        if (startBtn) {
+            const originalText = startBtn.innerHTML;
+            startBtn.innerHTML = '<span class="spinner"></span><span class="btn-text">启动中...</span>';
+            startBtn.disabled = true;
+
+            try {
+                const result = await startTunnel(configId);
+
+                if (result.success) {
+                    showNotification('隧道启动成功');
+                } else {
+                    showNotification(`启动失败: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                console.error('启动隧道失败:', error);
+                showNotification('网络错误，请稍后重试', 'error');
+            } finally {
+                startBtn.innerHTML = originalText;
+                startBtn.disabled = false;
+            }
+        }
+    }
+
+    async function refreshConfigsList() {
+        const refreshBtn = document.getElementById('refreshBtn');
+        const originalText = refreshBtn.innerHTML;
+        refreshBtn.innerHTML = '<span class="spinner"></span><span class="btn-text">刷新中...</span>';
+        refreshBtn.disabled = true;
+
+        await fetchConfigs();
+        renderConfigsList();
+
+        refreshBtn.innerHTML = originalText;
+        refreshBtn.disabled = false;
+        showNotification('列表已刷新');
+    }
+
+    function showLoginModal() {
+        document.getElementById('account').value = '';
+        document.getElementById('password').value = '';
+        document.getElementById('loginModalOverlay').classList.add('active');
+        document.getElementById('account').focus();
+    }
+
+    function closeLoginModal() {
+        document.getElementById('loginModalOverlay').classList.remove('active');
+    }
+
+    async function handleLogin() {
+        const account = document.getElementById('account').value.trim();
+        const password = document.getElementById('password').value.trim();
+
+        if (!account) {
+            showNotification(`请输入${currentLoginType === 'phone' ? '手机号' : '邮箱'}`, 'error');
+            return;
+        }
+
+        if (!password) {
+            showNotification('请输入密码', 'error');
+            return;
+        }
+
+        const submitBtn = document.getElementById('loginSubmitBtn');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<span class="spinner"></span><span class="btn-text">登录中...</span>';
+        submitBtn.disabled = true;
+
+        try {
+            const response = await fetch('/API/Login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    loginType: currentLoginType,
+                    account: account,
+                    password: password
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showNotification('登录成功');
+                closeLoginModal();
+
+                // 重新获取用户信息和配置列表
+                const user = await fetchUserInfo();
+                const configs = await fetchConfigs();
+
+                if (configs) {
+                    renderConfigsList();
+                }
+            } else {
+                showNotification(result.message || '登录失败', 'error');
+            }
+        } catch (error) {
+            console.error('登录失败:', error);
+            showNotification('网络错误，请稍后重试', 'error');
+        } finally {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    }
+
+    function initLoginTabs() {
+        const tabs = document.querySelectorAll('.login-tab');
+        const accountLabel = document.getElementById('accountLabel');
+        const accountInput = document.getElementById('account');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                currentLoginType = tab.getAttribute('data-type');
+
+                if (currentLoginType === 'phone') {
+                    accountLabel.textContent = '手机号';
+                    accountInput.placeholder = '请输入手机号';
+                } else {
+                    accountLabel.textContent = '邮箱';
+                    accountInput.placeholder = '请输入邮箱地址';
+                }
+            });
+        });
+    }
+
+    function initSidebarToggle() {
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebarContainer = document.getElementById('sidebarContainer');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        sidebarToggle.addEventListener('click', () => {
+            sidebarContainer.classList.toggle('open');
+            sidebarOverlay.classList.toggle('open');
+        });
+
+        sidebarOverlay.addEventListener('click', () => {
+            sidebarContainer.classList.remove('open');
+            sidebarOverlay.classList.remove('open');
+        });
+    }
+
+    function initEventListeners() {
+        // 切换账号按钮
+        document.getElementById('switchAccountBtn').addEventListener('click', showLoginModal);
+
+        // 刷新按钮
+        document.getElementById('refreshBtn').addEventListener('click', refreshConfigsList);
+
+        // 登录相关事件
+        document.getElementById('loginModalClose').addEventListener('click', closeLoginModal);
+        document.getElementById('loginCancelBtn').addEventListener('click', closeLoginModal);
+        document.getElementById('loginSubmitBtn').addEventListener('click', handleLogin);
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            handleLogin();
+        });
+
+        // 删除模态框相关事件
+        document.getElementById('deleteModalClose').addEventListener('click', closeDeleteModal);
+        document.getElementById('deleteCancelBtn').addEventListener('click', closeDeleteModal);
+        document.getElementById('deleteConfirmBtn').addEventListener('click', confirmDelete);
+
+        // 编辑模态框相关事件
+        document.getElementById('editModalClose').addEventListener('click', closeEditModal);
+        document.getElementById('editCancelBtn').addEventListener('click', closeEditModal);
+        document.getElementById('editConfirmBtn').addEventListener('click', confirmEdit);
+
+        // 详情模态框相关事件
+        document.getElementById('detailModalClose').addEventListener('click', () => {
+            document.getElementById('detailModalOverlay').classList.remove('active');
+        });
+        document.getElementById('detailCloseBtn').addEventListener('click', () => {
+            document.getElementById('detailModalOverlay').classList.remove('active');
+        });
+
+        // 模态框外部点击关闭
+        document.getElementById('loginModalOverlay').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('loginModalOverlay')) {
+                closeLoginModal();
+            }
+        });
+
+        document.getElementById('deleteModalOverlay').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('deleteModalOverlay')) {
+                closeDeleteModal();
+            }
+        });
+
+        document.getElementById('editModalOverlay').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('editModalOverlay')) {
+                closeEditModal();
+            }
+        });
+
+        document.getElementById('detailModalOverlay').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('detailModalOverlay')) {
+                document.getElementById('detailModalOverlay').classList.remove('active');
+            }
+        });
+
+        // 密码输入框回车提交
+        document.getElementById('password').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                handleLogin();
+            }
+        });
+
+        // 用户信息点击事件
+        document.getElementById('userInfo').addEventListener('click', () => {
+            if (!currentUser || !currentUser.username || currentUser.username === '未登录') {
+                showLoginModal();
+            }
+        });
+
+        // 初始化登录标签页
+        initLoginTabs();
+    }
+
+    function handleResize() {
+        if (window.innerWidth > 768) {
+            const sidebarContainer = document.getElementById('sidebarContainer');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+            sidebarContainer.classList.remove('open');
+            sidebarOverlay.classList.remove('open');
+        }
+    }
+
+    async function initPage() {
+        document.getElementById('greetingText').textContent = getGreeting();
+
+        initSidebarToggle();
+        initEventListeners();
+
+        // 并发获取数据
+        const [user, sidebar] = await Promise.all([
+            fetchUserInfo(),
+            fetchSidebar()
+        ]);
+
+        // 获取配置列表
+        const configs = await fetchConfigs();
+
+        // 渲染侧边栏
+        if (sidebar && sidebar.length > 0) {
+            renderSidebar(sidebar);
+        }
+
+        // 渲染配置列表
+        renderConfigsList();
+
+        window.addEventListener('resize', handleResize);
+
+        // 更新问候语
+        setInterval(() => {
+            document.getElementById('greetingText').textContent = getGreeting();
+        }, 30000);
+    }
+
+    document.addEventListener('DOMContentLoaded', initPage);
+</script>
+</body>
+</html>

@@ -12,6 +12,8 @@ login: "phone"
 # 账号配置
 account: ""
 password: ""
+#系统类型（请填入Windows或者Linux）
+systemType: "Windows"
 
 #----------------------------------
 #HttpAPI模块信息

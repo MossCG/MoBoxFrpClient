@@ -1,0 +1,1761 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:,">
+    <title>MoBoxFrp - 穿透码管理</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --primary-light: rgba(67, 97, 238, 0.1);
+            --secondary: #7209b7;
+            --secondary-light: rgba(114, 9, 183, 0.1);
+            --success: #07c160;
+            --success-light: rgba(7, 193, 96, 0.1);
+            --warning: #f72585;
+            --warning-light: rgba(247, 37, 133, 0.1);
+            --danger: #ef233c;
+            --danger-light: rgba(239, 35, 60, 0.1);
+            --info: #4cc9f0;
+            --info-light: rgba(76, 201, 240, 0.1);
+            --white: #ffffff;
+            --dark: #212529;
+            --gray: #6c757d;
+            --light-gray: #f8f9fa;
+            --border-color: #e9ecef;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --sidebar-width: 260px;
+            --header-height: 60px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #f5f7ff 0%, #f0f2ff 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        .header-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: var(--white);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .greeting {
+            font-size: 14px;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--primary-light);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .user-info:hover {
+            background: rgba(67, 97, 238, 0.15);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .switch-account-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: var(--light-gray);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--gray);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .switch-account-btn:hover {
+            background: var(--border-color);
+            color: var(--dark);
+        }
+
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .sidebar-container {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: var(--white);
+            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            z-index: 999;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+            list-style: none;
+            margin: 0;
+            flex: 1;
+        }
+
+        .menu-item {
+            margin-bottom: 2px;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 18px 24px;
+            color: var(--dark);
+            text-decoration: none;
+            transition: var(--transition);
+            position: relative;
+            border-left: 3px solid transparent;
+            cursor: pointer;
+        }
+
+        .menu-link:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-left-color: var(--primary);
+        }
+
+        .menu-link.active {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-left: 3px solid var(--primary);
+        }
+
+        .menu-icon {
+            width: 22px;
+            height: 22px;
+            margin-right: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .menu-text {
+            font-size: 16px;
+            font-weight: 500;
+            transition: var(--transition);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: var(--light-gray);
+        }
+
+        .submenu.open {
+            max-height: 300px;
+        }
+
+        .submenu-item {
+            list-style: none;
+        }
+
+        .submenu-link {
+            display: flex;
+            align-items: center;
+            padding: 16px 24px 16px 64px;
+            color: var(--gray);
+            text-decoration: none;
+            font-size: 15px;
+            transition: var(--transition);
+            border-left: 3px solid transparent;
+        }
+
+        .submenu-link:hover {
+            background: rgba(67, 97, 238, 0.08);
+            color: var(--primary);
+            border-left-color: var(--primary);
+        }
+
+        .submenu-link.active {
+            color: var(--primary);
+            background: rgba(67, 97, 238, 0.1);
+            border-left-color: var(--primary);
+            font-weight: 500;
+        }
+
+        .menu-arrow {
+            margin-left: auto;
+            transition: var(--transition);
+            font-size: 12px;
+            color: var(--gray);
+            flex-shrink: 0;
+        }
+
+        .menu-arrow.rotated {
+            transform: rotate(180deg);
+        }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 24px;
+            min-height: calc(100vh - var(--header-height));
+            transition: var(--transition);
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .page-description {
+            font-size: 16px;
+            color: var(--gray);
+            line-height: 1.6;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: var(--light-gray);
+            color: var(--dark);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border-color);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: var(--white);
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: #06b056;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: var(--white);
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            background: #d90429;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 24px;
+            min-height: 400px;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--border-color);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 16px;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        .codes-container {
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        .codes-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--light-gray);
+        }
+
+        .codes-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .codes-count {
+            font-size: 14px;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        .codes-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .codes-table th {
+            padding: 16px 24px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--gray);
+            background: var(--light-gray);
+            border-bottom: 1px solid var(--border-color);
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .codes-table td {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 14px;
+        }
+
+        .codes-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .codes-table tr:hover {
+            background: var(--primary-light);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-running {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .status-outdated {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .status-banned {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .token-display {
+            font-family: 'Courier New', monospace;
+            background: var(--light-gray);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            position: relative;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .token-display:hover {
+            background: var(--border-color);
+        }
+
+        .token-masked {
+            filter: blur(4px);
+            transition: filter 0.3s ease;
+        }
+
+        .token-masked:hover {
+            filter: blur(0);
+        }
+
+        .copy-btn {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 11px;
+            color: var(--gray);
+            cursor: pointer;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .token-display:hover .copy-btn {
+            opacity: 1;
+        }
+
+        .copy-btn:hover {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
+        .port-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .port-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            background: var(--info-light);
+            color: var(--info);
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .time-format {
+            font-size: 13px;
+            color: var(--gray);
+        }
+
+        .time-remaining {
+            font-size: 12px;
+            color: var(--warning);
+            font-weight: 600;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 24px;
+            color: var(--gray);
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+
+        .empty-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .empty-description {
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--white);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 24px 32px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--gray);
+            cursor: pointer;
+            padding: 4px;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            color: var(--dark);
+        }
+
+        .modal-body {
+            padding: 32px;
+        }
+
+        .modal-footer {
+            padding: 24px 32px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: var(--transition);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--white);
+            animation: spin 1s linear infinite;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            color: var(--gray);
+            font-size: 12px;
+            background: var(--light-gray);
+        }
+
+        .sidebar-footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .sidebar-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .notification {
+            position: fixed;
+            top: 80px;
+            right: 24px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-weight: 500;
+            z-index: 2000;
+            box-shadow: var(--shadow);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .notification-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .notification-error {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .code-detail {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .detail-item {
+            padding: 12px;
+            background: var(--light-gray);
+            border-radius: 8px;
+        }
+
+        .detail-label {
+            font-size: 12px;
+            color: var(--gray);
+            margin-bottom: 4px;
+        }
+
+        .detail-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        @media (max-width: 1200px) {
+            .codes-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .code-detail {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .mobile-toggle {
+                display: block;
+            }
+
+            .greeting {
+                display: none;
+            }
+
+            .sidebar-container {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                width: 280px;
+                box-shadow: 2px 0 20px rgba(0, 0, 0, 0.15);
+            }
+
+            .sidebar-container.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+
+            .sidebar-overlay.open {
+                display: block;
+            }
+
+            .user-section {
+                gap: 12px;
+            }
+
+            .switch-account-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 16px;
+            }
+
+            .header-actions {
+                justify-content: flex-end;
+            }
+
+            .codes-table th,
+            .codes-table td {
+                padding: 12px 16px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .header-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .header-actions .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="header-container">
+    <div class="logo-section">
+        <button class="mobile-toggle" id="sidebarToggle">☰</button>
+        <a href="/info" class="logo">
+            <div class="logo-icon">M</div>
+            <span class="logo-text">MoBoxFrp</span>
+        </a>
+    </div>
+
+    <div class="user-section">
+        <button class="switch-account-btn" id="switchAccountBtn">
+            <span>🔄</span>
+            <span>切换账号</span>
+        </button>
+        <span class="greeting" id="greetingText">早上好</span>
+        <div class="user-info" id="userInfo">
+            <div class="user-avatar" id="userAvatar">?</div>
+            <span class="user-name" id="userName">加载中...</span>
+        </div>
+    </div>
+</div>
+
+<div class="sidebar-container" id="sidebarContainer">
+    <ul class="sidebar-menu" id="sidebarMenu">
+        <!-- 默认菜单 -->
+        <li class="menu-item">
+            <a href="/info" class="menu-link">
+                <span class="menu-icon">🏠</span>
+                <span class="menu-text">客户端</span>
+            </a>
+        </li>
+        <li class="menu-item">
+            <a href="/codes" class="menu-link active">
+                <span class="menu-icon">🔗</span>
+                <span class="menu-text">穿透码管理</span>
+            </a>
+        </li>
+    </ul>
+    <div class="sidebar-footer">
+        © 2024 MoBoxFrp
+    </div>
+</div>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="main-content" id="mainContent">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">穿透码管理</h1>
+            <p class="page-description">管理您的内网穿透隧道和连接配置</p>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-secondary" id="refreshBtn">🔄 刷新列表</button>
+            <button class="btn btn-primary" id="createBtn">+ 创建穿透码</button>
+        </div>
+    </div>
+
+    <div id="contentArea">
+        <div class="loading-container" id="loadingContent">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">正在加载穿透码列表...</div>
+        </div>
+    </div>
+</div>
+
+<!-- 登录模态框 -->
+<div class="modal-overlay" id="loginModalOverlay">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">登录</h3>
+            <button class="modal-close" id="loginModalClose">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="login-tabs">
+                <button class="login-tab active" data-type="phone">手机号登录</button>
+                <button class="login-tab" data-type="email">邮箱登录</button>
+            </div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label" id="accountLabel" for="account">手机号</label>
+                    <input type="text" class="form-input" id="account"
+                           placeholder="请输入手机号" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="password">密码</label>
+                    <input type="password" class="form-input" id="password"
+                           placeholder="请输入密码" required>
+                </div>
+                <div class="form-group">
+                    <div class="form-hint" style="color: var(--gray); font-size: 13px; margin-top: 8px;">
+                        登录后可管理穿透码和查看账户信息
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" id="loginCancelBtn">取消</button>
+            <button type="button" class="btn btn-primary" id="loginSubmitBtn">登录</button>
+        </div>
+    </div>
+</div>
+
+<!-- 穿透码详情模态框 -->
+<div class="modal-overlay" id="detailModalOverlay">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">穿透码详情</h3>
+            <button class="modal-close" id="detailModalClose">&times;</button>
+        </div>
+        <div class="modal-body" id="detailModalBody">
+            <!-- 动态加载内容 -->
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" id="detailCloseBtn">关闭</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentUser = null;
+    let codesList = [];
+    let sidebarData = null;
+    let openedSubmenus = new Set();
+    let currentLoginType = 'phone';
+
+    function getGreeting() {
+        const hour = new Date().getHours();
+        if (hour >= 5 && hour < 12) return '早上好';
+        if (hour >= 12 && hour < 14) return '中午好';
+        if (hour >= 14 && hour < 18) return '下午好';
+        if (hour >= 18 && hour < 24) return '晚上好';
+        return '凌晨好';
+    }
+
+    function showNotification(message, type = 'success') {
+        const existingNotification = document.querySelector('.notification');
+        if (existingNotification) {
+            existingNotification.remove();
+        }
+
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.textContent = message;
+
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 3000);
+    }
+
+    async function fetchUserInfo() {
+        try {
+            const response = await fetch('/API/UserInfo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({})
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                currentUser = result;
+                updateUserDisplay(result);
+                return result;
+            } else {
+                currentUser = null;
+                updateUserDisplay({ username: '未登录' });
+                return null;
+            }
+        } catch (error) {
+            console.error('获取用户信息失败:', error);
+            showNotification('网络错误，请稍后重试', 'error');
+            currentUser = null;
+            updateUserDisplay({ username: '加载失败' });
+            return null;
+        }
+    }
+
+    async function fetchCodes() {
+        try {
+            const response = await fetch('/API/Codes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({})
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                codesList = result.codes || [];
+                return codesList;
+            } else {
+                showNotification(`获取列表失败: ${result.message}`, 'error');
+                codesList = [];
+                return [];
+            }
+        } catch (error) {
+            console.error('获取穿透码列表失败:', error);
+            showNotification('网络错误，请稍后重试', 'error');
+            codesList = [];
+            return [];
+        }
+    }
+
+    async function fetchSidebar() {
+        try {
+            const response = await fetch('/API/Sidebar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({})
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                const menus = result.sidebars || [];
+                return menus;
+            } else {
+                console.warn('获取侧边栏失败:', result.message);
+                return [];
+            }
+        } catch (error) {
+            console.error('获取侧边栏失败:', error);
+            return [];
+        }
+    }
+
+    function renderSidebar(menus) {
+        const sidebarMenu = document.getElementById('sidebarMenu');
+        const currentPath = window.location.pathname;
+
+        if (!menus || menus.length === 0) {
+            return;
+        }
+
+        // 按order字段排序
+        const sortedMenus = [...menus].sort((a, b) => a.order - b.order);
+
+        let html = '';
+
+        sortedMenus.forEach(menu => {
+            // 检查当前菜单是否应该展开
+            const isMenuActive = isMenuActiveForPath(menu, currentPath);
+            const isSubmenuOpen = openedSubmenus.has(menu.id) || isMenuActive;
+
+            if (menu.type === 'single') {
+                const isActive = currentPath === menu.url;
+                html += `
+                    <li class="menu-item">
+                        <a href="${menu.url}" class="menu-link ${isActive ? 'active' : ''}"
+                           data-menu-id="${menu.id}" data-type="single">
+                            <span class="menu-icon">${menu.icon}</span>
+                            <span class="menu-text">${menu.name}</span>
+                        </a>
+                    </li>
+                `;
+            } else if (menu.type === 'group' && menu.submenus) {
+                // 对子菜单排序
+                const sortedSubmenus = [...menu.submenus].sort((a, b) => a.order - b.order);
+
+                html += `
+                    <li class="menu-item">
+                        <a href="javascript:void(0)" class="menu-link ${isMenuActive ? 'active' : ''}"
+                           data-menu-id="${menu.id}" data-type="group">
+                            <span class="menu-icon">${menu.icon}</span>
+                            <span class="menu-text">${menu.name}</span>
+                            <span class="menu-arrow ${isSubmenuOpen ? 'rotated' : ''}">▼</span>
+                        </a>
+                        <ul class="submenu ${isSubmenuOpen ? 'open' : ''}" id="submenu-${menu.id}">
+                `;
+
+                sortedSubmenus.forEach(submenu => {
+                    const isSubmenuActive = currentPath === submenu.url;
+                    html += `
+                        <li class="submenu-item">
+                            <a href="${submenu.url}" class="submenu-link ${isSubmenuActive ? 'active' : ''}"
+                               data-menu-id="${submenu.id}" data-parent-id="${menu.id}">
+                                ${submenu.name}
+                            </a>
+                        </li>
+                    `;
+                });
+
+                html += `
+                        </ul>
+                    </li>
+                `;
+            }
+        });
+
+        sidebarMenu.innerHTML = html;
+        bindSidebarEvents();
+    }
+
+    function isMenuActiveForPath(menu, currentPath) {
+        if (menu.type === 'single') {
+            return menu.url === currentPath;
+        } else if (menu.type === 'group' && menu.submenus) {
+            return menu.submenus.some(submenu => submenu.url === currentPath);
+        }
+        return false;
+    }
+
+    function bindSidebarEvents() {
+        // 处理分组菜单点击事件
+        document.querySelectorAll('.menu-link[data-type="group"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const menuId = this.getAttribute('data-menu-id');
+                const submenu = document.getElementById(`submenu-${menuId}`);
+                const arrow = this.querySelector('.menu-arrow');
+
+                if (submenu.classList.contains('open')) {
+                    submenu.classList.remove('open');
+                    arrow.classList.remove('rotated');
+                    openedSubmenus.delete(menuId);
+                } else {
+                    submenu.classList.add('open');
+                    arrow.classList.add('rotated');
+                    openedSubmenus.add(menuId);
+                }
+            });
+        });
+
+        // 处理单页菜单点击事件
+        document.querySelectorAll('.menu-link[data-type="single"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (this.classList.contains('active')) {
+                    e.preventDefault();
+                }
+                document.querySelectorAll('.menu-link.active').forEach(item => {
+                    item.classList.remove('active');
+                });
+                document.querySelectorAll('.submenu-link.active').forEach(item => {
+                    item.classList.remove('active');
+                });
+                this.classList.add('active');
+
+                if (window.innerWidth <= 768) {
+                    const sidebarContainer = document.getElementById('sidebarContainer');
+                    const sidebarOverlay = document.getElementById('sidebarOverlay');
+                    sidebarContainer.classList.remove('open');
+                    sidebarOverlay.classList.remove('open');
+                }
+            });
+        });
+
+        // 处理子菜单点击事件
+        document.querySelectorAll('.submenu-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (this.classList.contains('active')) {
+                    e.preventDefault();
+                    return;
+                }
+
+                document.querySelectorAll('.menu-link.active').forEach(item => {
+                    item.classList.remove('active');
+                });
+                document.querySelectorAll('.submenu-link.active').forEach(item => {
+                    item.classList.remove('active');
+                });
+
+                this.classList.add('active');
+
+                const parentId = this.getAttribute('data-parent-id');
+                const parentLink = document.querySelector(`.menu-link[data-menu-id="${parentId}"]`);
+                if (parentLink) {
+                    parentLink.classList.add('active');
+
+                    const submenu = document.getElementById(`submenu-${parentId}`);
+                    const arrow = parentLink.querySelector('.menu-arrow');
+                    if (submenu && !submenu.classList.contains('open')) {
+                        submenu.classList.add('open');
+                        arrow.classList.add('rotated');
+                        openedSubmenus.add(parentId);
+                    }
+                }
+
+                if (window.innerWidth <= 768) {
+                    const sidebarContainer = document.getElementById('sidebarContainer');
+                    const sidebarOverlay = document.getElementById('sidebarOverlay');
+                    sidebarContainer.classList.remove('open');
+                    sidebarOverlay.classList.remove('open');
+                }
+            });
+        });
+    }
+
+    function updateUserDisplay(user) {
+        const userName = user.username || '未登录';
+        document.getElementById('userName').textContent = userName;
+        document.getElementById('userAvatar').textContent = userName.charAt(0).toUpperCase();
+        document.getElementById('greetingText').textContent = getGreeting();
+
+        // 根据登录状态显示或隐藏切换账号按钮
+        const switchAccountBtn = document.getElementById('switchAccountBtn');
+        if (user.username && user.username !== '未登录' && user.username !== '加载失败') {
+            switchAccountBtn.style.display = 'flex';
+        } else {
+            switchAccountBtn.style.display = 'none';
+        }
+    }
+
+    function formatTime(timestamp) {
+        if (!timestamp) return '未知';
+        const date = new Date(parseInt(timestamp));
+        return date.toLocaleString('zh-CN', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+
+    function formatTimeRemaining(timestamp) {
+        if (!timestamp) return '永久';
+        const now = Date.now();
+        const remaining = parseInt(timestamp) - now;
+
+        if (remaining <= 0) return '已过期';
+
+        const days = Math.floor(remaining / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((remaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+        if (days > 0) {
+            return `${days}天${hours}小时`;
+        } else {
+            return `${hours}小时`;
+        }
+    }
+
+    function getStatusBadge(status) {
+        switch(status) {
+            case 'running':
+                return '<span class="status-badge status-running">运行中</span>';
+            case 'outdated':
+                return '<span class="status-badge status-outdated">已过期</span>';
+            case 'banned':
+                return '<span class="status-badge status-banned">已封禁</span>';
+            default:
+                return `<span class="status-badge status-outdated">${status}</span>`;
+        }
+    }
+
+    function formatToken(token) {
+        if (!token) return '未知';
+        // 显示前6位和后6位，中间用*代替
+        if (token.length <= 12) return token;
+        const firstPart = token.substring(0, 6);
+        const lastPart = token.substring(token.length - 6);
+        return `${firstPart}******${lastPart}`;
+    }
+
+    function formatPorts(portString) {
+        if (!portString) return '<span class="port-badge">未设置</span>';
+        const ports = portString.split(',').map(port => port.trim());
+        return ports.map(port => `<span class="port-badge">${port}</span>`).join('');
+    }
+
+    function renderCodesTable(codes) {
+        const contentArea = document.getElementById('contentArea');
+
+        if (!codes || codes.length === 0) {
+            contentArea.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">🔗</div>
+                    <div class="empty-title">暂无穿透码</div>
+                    <div class="empty-description">您还没有创建任何穿透码，点击上方按钮创建一个吧</div>
+                </div>
+            `;
+            return;
+        }
+
+        const runningCount = codes.filter(code => code.status === 'running').length;
+        const outdatedCount = codes.filter(code => code.status === 'outdated').length;
+        const bannedCount = codes.filter(code => code.status === 'banned').length;
+
+        const tableRows = codes.map(code => `
+            <tr data-code-id="${code.codeID}">
+                <td>${code.number}</td>
+                <td>${getStatusBadge(code.status)}</td>
+                <td>
+                    <div class="token-display" data-full-token="${code.token}">
+                        <span class="token-masked">${formatToken(code.token)}</span>
+                        <button class="copy-btn" onclick="copyToken('${code.token}')">复制</button>
+                    </div>
+                </td>
+                <td>${code.node}</td>
+                <td>${code.band} Mbps</td>
+                <td>
+                    <div class="port-list">
+                        <span class="port-badge">${code.portServer}</span>
+                    </div>
+                </td>
+                <td>
+                    <div class="port-list">
+                        ${formatPorts(code.portOpen)}
+                    </div>
+                </td>
+                <td>
+                    <div class="time-format">${formatTime(code.timeCreate)}</div>
+                </td>
+                <td>
+                    <div class="time-format">${formatTime(code.timeOutdate)}</div>
+                    <div class="time-remaining">${formatTimeRemaining(code.timeOutdate)}</div>
+                </td>
+                <td>
+                    <button class="btn btn-secondary" onclick="showCodeDetail('${code.codeID}')" style="padding: 6px 12px; font-size: 12px;">详情</button>
+                </td>
+            </tr>
+        `).join('');
+
+        contentArea.innerHTML = `
+            <div class="codes-container">
+                <div class="codes-header">
+                    <div>
+                        <div class="codes-title">穿透码列表</div>
+                        <div class="codes-count">
+                            总计: ${codes.length} |
+                            运行中: <span style="color: var(--success);">${runningCount}</span> |
+                            已过期: <span style="color: var(--warning);">${outdatedCount}</span> |
+                            已封禁: <span style="color: var(--danger);">${bannedCount}</span>
+                        </div>
+                    </div>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="codes-table">
+                        <thead>
+                            <tr>
+                                <th>编号</th>
+                                <th>状态</th>
+                                <th>穿透码</th>
+                                <th>节点</th>
+                                <th>带宽</th>
+                                <th>服务端口</th>
+                                <th>开放端口</th>
+                                <th>创建时间</th>
+                                <th>到期时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${tableRows}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+
+        // 绑定token显示事件
+        document.querySelectorAll('.token-display').forEach(display => {
+            display.addEventListener('click', function(e) {
+                if (!e.target.classList.contains('copy-btn')) {
+                    const masked = this.querySelector('.token-masked');
+                    if (masked.style.filter === 'blur(0px)' || !masked.style.filter) {
+                        masked.style.filter = 'blur(4px)';
+                    } else {
+                        masked.style.filter = 'blur(0px)';
+                    }
+                }
+            });
+        });
+    }
+
+    function copyToken(token) {
+        navigator.clipboard.writeText(token).then(() => {
+            showNotification('穿透码已复制到剪贴板');
+        }).catch(err => {
+            console.error('复制失败:', err);
+            showNotification('复制失败，请手动复制', 'error');
+        });
+    }
+
+    function showCodeDetail(codeId) {
+        const code = codesList.find(c => c.codeID === codeId);
+        if (!code) return;
+
+        const modalBody = document.getElementById('detailModalBody');
+
+        const detailContent = `
+            <div class="code-detail">
+                <div class="detail-item">
+                    <div class="detail-label">穿透码ID</div>
+                    <div class="detail-value">${code.codeID}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">穿透码编号</div>
+                    <div class="detail-value">${code.number}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">节点</div>
+                    <div class="detail-value">${code.node}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">状态</div>
+                    <div class="detail-value">${getStatusBadge(code.status)}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">带宽</div>
+                    <div class="detail-value">${code.band} Mbps</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">服务端口</div>
+                    <div class="detail-value">${code.portServer}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">开放端口</div>
+                    <div class="detail-value">${code.portOpen || '未设置'}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">创建时间</div>
+                    <div class="detail-value">${formatTime(code.timeCreate)}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">到期时间</div>
+                    <div class="detail-value">${formatTime(code.timeOutdate)}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">剩余时间</div>
+                    <div class="detail-value">${formatTimeRemaining(code.timeOutdate)}</div>
+                </div>
+                <div class="detail-item" style="grid-column: span 2;">
+                    <div class="detail-label">完整穿透码</div>
+                    <div class="detail-value" style="font-family: monospace; word-break: break-all; padding: 8px; background: var(--light-gray); border-radius: 4px;">
+                        ${code.token}
+                    </div>
+                </div>
+            </div>
+        `;
+
+        modalBody.innerHTML = detailContent;
+        document.getElementById('detailModalOverlay').classList.add('active');
+    }
+
+    function closeDetailModal() {
+        document.getElementById('detailModalOverlay').classList.remove('active');
+    }
+
+    async function handleCreateCode() {
+        if (!currentUser || !currentUser.username || currentUser.username === '未登录') {
+            showNotification('请先登录后再创建穿透码', 'error');
+            showLoginModal();
+            return;
+        }
+
+        showNotification('创建穿透码功能正在开发中...', 'error');
+        // 这里可以添加创建穿透码的逻辑
+        // 例如：打开创建穿透码的模态框
+    }
+
+    async function refreshCodesList() {
+        const refreshBtn = document.getElementById('refreshBtn');
+        const originalText = refreshBtn.innerHTML;
+        refreshBtn.innerHTML = '<span class="spinner"></span><span class="btn-text">刷新中...</span>';
+        refreshBtn.disabled = true;
+
+        const codes = await fetchCodes();
+        renderCodesTable(codes);
+
+        refreshBtn.innerHTML = originalText;
+        refreshBtn.disabled = false;
+        showNotification('列表已刷新');
+    }
+
+    function showLoginModal() {
+        document.getElementById('account').value = '';
+        document.getElementById('password').value = '';
+        document.getElementById('loginModalOverlay').classList.add('active');
+        document.getElementById('account').focus();
+    }
+
+    function closeLoginModal() {
+        document.getElementById('loginModalOverlay').classList.remove('active');
+    }
+
+    async function handleLogin() {
+        const account = document.getElementById('account').value.trim();
+        const password = document.getElementById('password').value.trim();
+
+        if (!account) {
+            showNotification(`请输入${currentLoginType === 'phone' ? '手机号' : '邮箱'}`, 'error');
+            return;
+        }
+
+        if (!password) {
+            showNotification('请输入密码', 'error');
+            return;
+        }
+
+        const submitBtn = document.getElementById('loginSubmitBtn');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<span class="spinner"></span><span class="btn-text">登录中...</span>';
+        submitBtn.disabled = true;
+
+        try {
+            const response = await fetch('/API/Login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    loginType: currentLoginType,
+                    account: account,
+                    password: password
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showNotification('登录成功');
+                closeLoginModal();
+
+                // 重新获取用户信息和穿透码列表
+                const user = await fetchUserInfo();
+                const codes = await fetchCodes();
+
+                if (codes) {
+                    renderCodesTable(codes);
+                }
+            } else {
+                showNotification(result.message || '登录失败', 'error');
+            }
+        } catch (error) {
+            console.error('登录失败:', error);
+            showNotification('网络错误，请稍后重试', 'error');
+        } finally {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    }
+
+    function initLoginTabs() {
+        const tabs = document.querySelectorAll('.login-tab');
+        const accountLabel = document.getElementById('accountLabel');
+        const accountInput = document.getElementById('account');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                currentLoginType = tab.getAttribute('data-type');
+
+                if (currentLoginType === 'phone') {
+                    accountLabel.textContent = '手机号';
+                    accountInput.placeholder = '请输入手机号';
+                } else {
+                    accountLabel.textContent = '邮箱';
+                    accountInput.placeholder = '请输入邮箱地址';
+                }
+            });
+        });
+    }
+
+    function initSidebarToggle() {
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebarContainer = document.getElementById('sidebarContainer');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        sidebarToggle.addEventListener('click', () => {
+            sidebarContainer.classList.toggle('open');
+            sidebarOverlay.classList.toggle('open');
+        });
+
+        sidebarOverlay.addEventListener('click', () => {
+            sidebarContainer.classList.remove('open');
+            sidebarOverlay.classList.remove('open');
+        });
+    }
+
+    function initEventListeners() {
+        // 切换账号按钮
+        document.getElementById('switchAccountBtn').addEventListener('click', showLoginModal);
+
+        // 刷新按钮
+        document.getElementById('refreshBtn').addEventListener('click', refreshCodesList);
+
+        // 创建按钮
+        document.getElementById('createBtn').addEventListener('click', handleCreateCode);
+
+        // 登录相关事件
+        document.getElementById('loginModalClose').addEventListener('click', closeLoginModal);
+        document.getElementById('loginCancelBtn').addEventListener('click', closeLoginModal);
+        document.getElementById('loginSubmitBtn').addEventListener('click', handleLogin);
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            handleLogin();
+        });
+
+        // 详情模态框相关事件
+        document.getElementById('detailModalClose').addEventListener('click', closeDetailModal);
+        document.getElementById('detailCloseBtn').addEventListener('click', closeDetailModal);
+        document.getElementById('detailModalOverlay').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('detailModalOverlay')) {
+                closeDetailModal();
+            }
+        });
+
+        // 模态框外部点击关闭
+        document.getElementById('loginModalOverlay').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('loginModalOverlay')) {
+                closeLoginModal();
+            }
+        });
+
+        // 密码输入框回车提交
+        document.getElementById('password').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                handleLogin();
+            }
+        });
+
+        // 用户信息点击事件
+        document.getElementById('userInfo').addEventListener('click', () => {
+            if (!currentUser || !currentUser.username || currentUser.username === '未登录') {
+                showLoginModal();
+            }
+        });
+
+        // 初始化登录标签页
+        initLoginTabs();
+    }
+
+    function handleResize() {
+        if (window.innerWidth > 768) {
+            const sidebarContainer = document.getElementById('sidebarContainer');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+            sidebarContainer.classList.remove('open');
+            sidebarOverlay.classList.remove('open');
+        }
+    }
+
+    async function initPage() {
+        document.getElementById('greetingText').textContent = getGreeting();
+
+        initSidebarToggle();
+        initEventListeners();
+
+        // 并发获取数据
+        const [user, sidebar] = await Promise.all([
+            fetchUserInfo(),
+            fetchSidebar()
+        ]);
+
+        // 获取穿透码列表
+        const codes = await fetchCodes();
+
+        // 渲染侧边栏
+        if (sidebar && sidebar.length > 0) {
+            renderSidebar(sidebar);
+        }
+
+        // 渲染穿透码列表
+        renderCodesTable(codes);
+
+        window.addEventListener('resize', handleResize);
+
+        // 更新问候语
+        setInterval(() => {
+            document.getElementById('greetingText').textContent = getGreeting();
+        }, 30000);
+    }
+
+    document.addEventListener('DOMContentLoaded', initPage);
+</script>
+</body>
+</html>

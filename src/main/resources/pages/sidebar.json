@@ -21,10 +21,22 @@
         "order": 1
       },
       {
+        "id": "services-configCreate",
+        "name": "配置创建",
+        "url": "/services/configCreate",
+        "order": 2
+      },
+      {
+        "id": "services-configManager",
+        "name": "配置管理",
+        "url": "/services/configManager",
+        "order": 3
+      },
+      {
         "id": "services-tunnel",
         "name": "隧道列表",
         "url": "/services/tunnel",
-        "order": 2
+        "order": 4
       }
     ]
   },
