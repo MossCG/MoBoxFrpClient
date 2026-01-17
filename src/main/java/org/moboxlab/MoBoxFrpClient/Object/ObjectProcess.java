@@ -80,6 +80,9 @@ public class ObjectProcess {
                         if (readLine.contains("no such host")) {
                             BasicInfo.logger.sendWarn(prefix+"隧道启动失败：域名解析失败");
                         }
+                        if (readLine.contains("target machine actively refused it")) {
+                            BasicInfo.logger.sendWarn(prefix+"隧道启动失败：目标服务器拒绝链接");
+                        }
                         BasicInfo.logger.sendWarn(prefix+"隧道启动异常！已自动关闭隧道！");
                         object.asyncStop();
                     }
