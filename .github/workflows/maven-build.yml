@@ -1,10 +1,20 @@
-name: Java CI with Maven
+name: Java CI and Release with Maven
 
-on: [push, pull_request]
+on:
+  # 监听所有分支的推送（按您的需求）
+  push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ "**" ]
+  # 关键：监听 GitHub Release 的创建事件，以自动打包
+  release:
+    types: [published]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read # 构建阶段只需读取权限
 
     steps:
       - uses: actions/checkout@v4
@@ -14,18 +24,42 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      # 给脚本执行权限
-      - name: Make script executable
+      # 1. 使用自定义脚本构建并打包 JAR (包含MossLib)
+      - name: Make package script executable
         run: chmod +x package.sh
 
-      # 使用自定义脚本打包
       - name: Custom package with MossLib
         run: ./package.sh
 
-      # 上传JAR文件
-      - name: Upload JAR artifact
-        uses: actions/upload-artifact@v4
+      # 2. 上传 JAR 文件作为 Artifact (不压缩)
+      - name: Upload JAR artifact (uncompressed)
+        uses: actions/upload-artifact@v4[citation:10]
         with:
-          name: MoBoxFrpClient
+          name: MoBoxFrpClient-JAR
           path: target/MoBoxFrpClient.jar
-          compression-level: 0  # 不压缩
+          if-no-files-found: error
+          compression-level: 0[citation:10] # 设置为0以禁用压缩
+
+  create-release:
+    # 该任务仅在有新的 GitHub Release 发布时运行
+    needs: build # 依赖于 build 任务成功
+    if: github.event_name == 'release' && github.event.action == 'published'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # 发布 Release 需要写入权限
+
+    steps:
+      - name: Download built artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: MoBoxFrpClient-JAR
+
+      - name: Display downloaded files
+        run: ls -la
+
+      # 3. 自动发布到 GitHub Release
+      - name: Attach JAR to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          # 将构建好的 JAR 附加到触发此次工作流的那个 Release 中
+          files: MoBoxFrpClient.jar
