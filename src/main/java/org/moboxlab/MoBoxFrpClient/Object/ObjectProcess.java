@@ -50,7 +50,7 @@ public class ObjectProcess {
         BasicInfo.logger.sendInfo("正在停止隧道："+name);
         //停止进程
         //我知道stop弃用了但是interrupt不好使
-        daemon.stop();
+        daemon.interrupt();
         process.destroy();
         //删除配置
         TaskRemoveConfig.executeTask(name);
@@ -67,15 +67,18 @@ public class ObjectProcess {
                     BasicInfo.sendDebug(readLine);
                     //日志翻译及处理
                     String prefix = "["+object.name+"]";
+                    //基本信息
                     if (readLine.contains("try to connect to server...")) {
                         BasicInfo.logger.sendInfo(prefix+"正在连接至服务器......");
                     }
                     if (readLine.contains("login to server success")) {
                         BasicInfo.logger.sendInfo(prefix+"登录成功！");
                     }
+                    //成功信息
                     if (readLine.contains("start proxy success")) {
                         BasicInfo.logger.sendInfo(prefix+"隧道启动成功！");
                     }
+                    //链接错误处理
                     if (readLine.contains("connect to server error")) {
                         if (readLine.contains("no such host")) {
                             BasicInfo.logger.sendWarn(prefix+"隧道启动失败：域名解析失败");
@@ -86,6 +89,7 @@ public class ObjectProcess {
                         BasicInfo.logger.sendWarn(prefix+"隧道启动异常！已自动关闭隧道！");
                         object.asyncStop();
                     }
+                    //启动错误处理
                     if (readLine.contains("start error")) {
                         if (readLine.contains("port already used")) {
                             BasicInfo.logger.sendWarn(prefix+"隧道启动失败：端口已被占用");
@@ -101,6 +105,7 @@ public class ObjectProcess {
                 BasicInfo.logger.sendException(e);
                 BasicInfo.logger.sendWarn("守护进程出现错误！隧道名称："+object.name);
             }
+            if (!object.process.isAlive()) break;
         }
     }
 
