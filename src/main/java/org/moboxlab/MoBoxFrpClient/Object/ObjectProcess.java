@@ -45,7 +45,6 @@ public class ObjectProcess {
     }
 
     //停止方法
-    @SuppressWarnings("deprecation")
     public void stop() throws Exception{
         BasicInfo.logger.sendInfo("正在停止隧道："+name);
         //停止进程
@@ -56,7 +55,6 @@ public class ObjectProcess {
         TaskRemoveConfig.executeTask(name);
     }
 
-    @SuppressWarnings("InfiniteLoopStatement")
     public static void daemonVoid(ObjectProcess object) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(object.process.getInputStream(), StandardCharsets.UTF_8));
         while (true) {
