@@ -8,6 +8,6 @@ public class RequestUserInfo {
         String route = "/API/UserInfo";
         JSONObject request = new JSONObject();
         request.put("token", BasicInfo.token);
-        return RequestBasic.postAPI(route,request,0);
+        return RequestBasic.postAPI(route,request,true,0);
     }
 }

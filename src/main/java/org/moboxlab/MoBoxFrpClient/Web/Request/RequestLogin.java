@@ -9,6 +9,6 @@ public class RequestLogin {
         request.put("loginType",loginType);
         request.put("account",account);
         request.put("password",password);
-        return RequestBasic.postAPI(route,request,0);
+        return RequestBasic.postAPI(route,request,false,0);
     }
 }

@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 
 public class RequestBasic {
     @SuppressWarnings("ExtractMethodRecommender")
-    public static JSONObject postAPI(String route, JSONObject data, int depth) {
+    public static JSONObject postAPI(String route, JSONObject data, boolean retry, int depth) {
         try {
             //建立连接
             URL targetURL = new URL(BasicInfo.api+route);
@@ -37,12 +37,14 @@ public class RequestBasic {
             reader.close();
             //返回数据
             JSONObject result = JSONObject.parseObject(readInfo.toString());
-            //如果提示未登录，重新登录
-            if (!result.getBoolean("success") && BasicInfo.login && depth<5) {
-                TaskLogin.executeTask(BasicInfo.loginType,BasicInfo.account,BasicInfo.password);
-                return postAPI(route, data, depth+1);
-            }
             BasicInfo.sendDebug(result.toJSONString());
+            //如果提示未登录，重新登录
+            if (!result.getBoolean("success") && BasicInfo.login && depth<3 && retry) {
+                BasicInfo.logger.sendWarn("API请求失败，正在尝试重新登录！");
+                TaskLogin.executeTask(BasicInfo.loginType,BasicInfo.account,BasicInfo.password,false);
+                data.replace("token", BasicInfo.token);
+                return postAPI(route, data, true, depth+1);
+            }
             return result;
         } catch (Exception e) {
             //出错

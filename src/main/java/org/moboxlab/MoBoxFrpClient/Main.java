@@ -59,7 +59,7 @@ public class Main {
             String account = BasicInfo.config.getString("account");
             String password = BasicInfo.config.getString("password");
             String login = BasicInfo.config.getString("login");
-            TaskLogin.executeTask(login,account,password);
+            TaskLogin.executeTask(login,account,password,true);
         }
 
         //Tick线程初始化

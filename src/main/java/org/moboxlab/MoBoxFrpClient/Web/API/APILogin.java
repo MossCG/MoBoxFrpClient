@@ -46,7 +46,7 @@ public class APILogin implements HttpHandler {
             String account = requestData.getString("account");
             String password = requestData.getString("password");
             //执行登录
-            TaskLogin.executeTask(loginType,account,password);
+            TaskLogin.executeTask(loginType,account,password,true);
             //写入响应数据
             responseData.replace("success",BasicInfo.login);
             if (!BasicInfo.login) {

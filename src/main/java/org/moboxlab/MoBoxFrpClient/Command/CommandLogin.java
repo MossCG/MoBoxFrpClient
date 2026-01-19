@@ -22,7 +22,7 @@ public class CommandLogin extends ObjectCommand {
             BasicInfo.logger.sendWarn("指令格式：login <phone/email> <account> <password>");
             return false;
         }
-        TaskLogin.executeTask(args[1],args[2],args[3]);
+        TaskLogin.executeTask(args[1],args[2],args[3],true);
         return true;
     }
 }
