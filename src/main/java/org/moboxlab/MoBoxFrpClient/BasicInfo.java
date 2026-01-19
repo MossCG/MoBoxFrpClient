@@ -27,6 +27,9 @@ public class BasicInfo {
     //登录信息
     public static boolean login = false;
     public static String token = "";
+    public static String account = "";
+    public static String password = "";
+    public static String loginType = "";
     //用户信息
     public static JSONObject userInfo;
     public static JSONArray codeInfo;

@@ -2,6 +2,7 @@ package org.moboxlab.MoBoxFrpClient.Web.Request;
 
 import com.alibaba.fastjson.JSONObject;
 import org.moboxlab.MoBoxFrpClient.BasicInfo;
+import org.moboxlab.MoBoxFrpClient.Task.TaskLogin;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -13,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 
 public class RequestBasic {
     @SuppressWarnings("ExtractMethodRecommender")
-    public static JSONObject postAPI(String route, JSONObject data) {
+    public static JSONObject postAPI(String route, JSONObject data, int depth) {
         try {
             //建立连接
             URL targetURL = new URL(BasicInfo.api+route);
@@ -36,6 +37,11 @@ public class RequestBasic {
             reader.close();
             //返回数据
             JSONObject result = JSONObject.parseObject(readInfo.toString());
+            //如果提示未登录，重新登录
+            if (!result.getBoolean("success") && BasicInfo.login && depth<5) {
+                TaskLogin.executeTask(BasicInfo.loginType,BasicInfo.account,BasicInfo.password);
+                return postAPI(route, data, depth+1);
+            }
             BasicInfo.sendDebug(result.toJSONString());
             return result;
         } catch (Exception e) {

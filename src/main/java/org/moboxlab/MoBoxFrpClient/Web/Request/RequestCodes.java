@@ -8,6 +8,6 @@ public class RequestCodes {
         String route = "/API/UserCode/List";
         JSONObject request = new JSONObject();
         request.put("token", BasicInfo.token);
-        return RequestBasic.postAPI(route,request);
+        return RequestBasic.postAPI(route,request,0);
     }
 }
