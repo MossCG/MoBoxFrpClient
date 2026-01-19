@@ -13,7 +13,7 @@ public class BasicInfo {
     //小更新之间基本上只是小功能更新，可以上下兼容
     //修改次数只代表一些微调（但是基本上建议更新）
     //版本类型 Beta为测试版，Stable为稳定版
-    public static String version = "V1.0.1.0.0450";
+    public static String version = "V1.0.2.1.0314";
     public static String versionType = "Beta";
 
     //作者信息，请勿修改
@@ -31,6 +31,8 @@ public class BasicInfo {
     public static String password = "";
     public static String loginType = "";
     //用户信息
+    public static long timeUserInfo = 0;
+    public static long timeCodeInfo = 0;
     public static JSONObject userInfo;
     public static JSONArray codeInfo;
 

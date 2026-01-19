@@ -14,7 +14,8 @@ public class TaskGetUserInfo {
             BasicInfo.logger.sendInfo("绑定邮箱："+userInfo.containsKey("email"));
             BasicInfo.logger.sendInfo("绑定手机："+userInfo.containsKey("phone"));
             BasicInfo.logger.sendInfo("绑定QQ账号："+userInfo.containsKey("qq"));
-            BasicInfo.userInfo = userInfo;
         }
+        BasicInfo.userInfo = userInfo;
+        BasicInfo.timeUserInfo = System.currentTimeMillis();
     }
 }

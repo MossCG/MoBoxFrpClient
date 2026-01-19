@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.moboxlab.MoBoxFrpClient.BasicInfo;
+import org.moboxlab.MoBoxFrpClient.Task.TaskGetUserInfo;
 import org.moboxlab.MoBoxFrpClient.Web.WebBasic;
 
 import java.io.IOException;
@@ -50,6 +51,10 @@ public class APIUserInfo implements HttpHandler {
             if (!BasicInfo.login) {
                 responseData.replace("message","没登录哦~");
                 return;
+            }
+            //检查缓存有效期
+            if (BasicInfo.timeUserInfo + 60*1000L < System.currentTimeMillis()) {
+                TaskGetUserInfo.executeTask(false);
             }
             //写入响应数据
             responseData.putAll(BasicInfo.userInfo);

@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.moboxlab.MoBoxFrpClient.BasicInfo;
+import org.moboxlab.MoBoxFrpClient.Task.TaskGetCodes;
 import org.moboxlab.MoBoxFrpClient.Web.WebBasic;
 
 import java.io.IOException;
@@ -54,6 +55,10 @@ public class APICodes implements HttpHandler {
             String ip = WebBasic.getRemoteIP(exchange);
             BasicInfo.sendDebug(ip+" "+exchange.getRequestURI().toString());
             JSONObject requestData = WebBasic.loadRequestData(exchange);
+            //检查缓存有效期
+            if (BasicInfo.timeCodeInfo + 15*1000L < System.currentTimeMillis()) {
+                TaskGetCodes.executeTask(false);
+            }
             //写入响应数据
             responseData.replace("codes", BasicInfo.codeInfo);
             responseData.replace("success",true);

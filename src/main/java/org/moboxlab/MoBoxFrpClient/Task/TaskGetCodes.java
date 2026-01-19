@@ -10,21 +10,20 @@ public class TaskGetCodes {
         JSONObject codeInfo = RequestCodes.getResult();
         JSONArray codes = codeInfo.getJSONArray("codes");
         JSONArray newCodes = new JSONArray();
-        if (display) {
-            BasicInfo.logger.sendInfo("穿透码数据更新成功！共获取到："+codes.size()+"个可用穿透码！");
-            codes.forEach(o->{
-                JSONObject code = (JSONObject) o;
-                if (code.getString("status").equals("running")) {
-                    String codeMessage = "";
-                    codeMessage += ("#"+code.getString("codeID"));
-                    codeMessage += (" | "+code.getString("node"));
-                    codeMessage += ("-"+code.getString("number"));
-                    codeMessage += ("-"+code.getString("band")+"Mbps");
-                    BasicInfo.logger.sendInfo(codeMessage);
-                    newCodes.add(code);
-                }
-            });
-        }
+        if (display) BasicInfo.logger.sendInfo("穿透码数据更新成功！共获取到："+codes.size()+"个可用穿透码！");
+        codes.forEach(o->{
+            JSONObject code = (JSONObject) o;
+            if (code.getString("status").equals("running")) {
+                String codeMessage = "";
+                codeMessage += ("#"+code.getString("codeID"));
+                codeMessage += (" | "+code.getString("node"));
+                codeMessage += ("-"+code.getString("number"));
+                codeMessage += ("-"+code.getString("band")+"Mbps");
+                if (display) BasicInfo.logger.sendInfo(codeMessage);
+                newCodes.add(code);
+            }
+        });
         BasicInfo.codeInfo = newCodes;
+        BasicInfo.timeCodeInfo = System.currentTimeMillis();
     }
 }
