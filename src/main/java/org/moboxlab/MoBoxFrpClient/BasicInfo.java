@@ -13,7 +13,7 @@ public class BasicInfo {
     //小更新之间基本上只是小功能更新，可以上下兼容
     //修改次数只代表一些微调（但是基本上建议更新）
     //版本类型 Beta为测试版，Stable为稳定版
-    public static String version = "V1.0.3.1.0346";
+    public static String version = "V1.1.1.1.0407";
     public static String versionType = "Stable";
 
     //作者信息，请勿修改
@@ -25,6 +25,7 @@ public class BasicInfo {
     //API地址
     public static String api = "https://www.moboxfrp.top";
     //登录信息
+    public static boolean start = false;
     public static boolean login = false;
     public static String token = "";
     public static String account = "";

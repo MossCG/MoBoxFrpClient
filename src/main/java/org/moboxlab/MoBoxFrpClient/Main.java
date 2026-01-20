@@ -98,6 +98,7 @@ public class Main {
         BasicInfo.logger.sendInfo("使用指令help查询命令帮助！");
         BasicInfo.logger.sendInfo("请访问 http://127.0.0.1:"+BasicInfo.config.getInteger("httpPort")+"/ 进入管理页面！");
         BasicInfo.logger.sendInfo("======================================================================");
+        BasicInfo.start = true;
     }
 
     public static void reload() {

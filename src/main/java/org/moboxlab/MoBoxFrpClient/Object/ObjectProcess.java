@@ -60,7 +60,9 @@ public class ObjectProcess {
         TaskRemoveConfig.executeTask(name);
     }
 
+    //守护进程信息读取方法
     public static void daemonVoid(ObjectProcess object) {
+        object.waitStart();
         BufferedReader reader = new BufferedReader(new InputStreamReader(object.process.getInputStream(), StandardCharsets.UTF_8));
         while (true) {
             try {
@@ -119,9 +121,23 @@ public class ObjectProcess {
         }
     }
 
+    //异步停止，避免线程冲突
     public void asyncStop() {
         CacheStartStatus.setStatus(name,"启动失败！请查询命令行日志获取信息！");
         Thread thread = new Thread(() -> TaskTunnelStop.executeTask(name));
         thread.start();
+    }
+
+    //等待启动完成再输出信息
+    @SuppressWarnings("BusyWait")
+    public void waitStart() {
+        while (true) {
+            try {
+                Thread.sleep(100L);
+                if (BasicInfo.start) return;
+            } catch (Exception e) {
+                BasicInfo.logger.sendException(e);
+            }
+        }
     }
 }
