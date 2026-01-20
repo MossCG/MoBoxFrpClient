@@ -3,7 +3,6 @@ package org.moboxlab.MoBoxFrpClient.Tick;
 import org.moboxlab.MoBoxFrpClient.BasicInfo;
 import org.moboxlab.MoBoxFrpClient.Task.TaskGetCodes;
 import org.moboxlab.MoBoxFrpClient.Task.TaskGetUserInfo;
-import org.moboxlab.MoBoxFrpClient.Task.TaskStatus;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
