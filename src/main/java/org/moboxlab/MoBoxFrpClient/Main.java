@@ -2,6 +2,7 @@ package org.moboxlab.MoBoxFrpClient;
 
 import org.moboxlab.MoBoxFrpClient.Command.*;
 import org.moboxlab.MoBoxFrpClient.Task.*;
+import org.moboxlab.MoBoxFrpClient.Tick.TickInfoUpdate;
 import org.moboxlab.MoBoxFrpClient.Tick.TickStatus;
 import org.moboxlab.MoBoxFrpClient.Tick.TickWatchdog;
 import org.moboxlab.MoBoxFrpClient.Web.WebMain;
@@ -66,6 +67,7 @@ public class Main {
         BasicInfo.logger.sendInfo("正在启动Tick线程......");
         TickStatus.runTick();
         TickWatchdog.runTick();
+        TickInfoUpdate.runTick();
 
         //WebAPI模块初始化
         BasicInfo.logger.sendInfo("正在初始化WebAPI模块......");

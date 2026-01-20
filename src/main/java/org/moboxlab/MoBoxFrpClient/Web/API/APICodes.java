@@ -56,7 +56,7 @@ public class APICodes implements HttpHandler {
             BasicInfo.sendDebug(ip+" "+exchange.getRequestURI().toString());
             JSONObject requestData = WebBasic.loadRequestData(exchange);
             //检查缓存有效期
-            if (BasicInfo.timeCodeInfo + 15*1000L < System.currentTimeMillis()) {
+            if (BasicInfo.timeCodeInfo + 45*1000L < System.currentTimeMillis()) {
                 TaskGetCodes.executeTask(false);
             }
             //写入响应数据
