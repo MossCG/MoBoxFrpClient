@@ -2,6 +2,7 @@ package org.moboxlab.MoBoxFrpClient.Object;
 
 import com.alibaba.fastjson.JSONObject;
 import org.moboxlab.MoBoxFrpClient.BasicInfo;
+import org.moboxlab.MoBoxFrpClient.Cache.CacheStartStatus;
 import org.moboxlab.MoBoxFrpClient.Task.TaskRemoveConfig;
 import org.moboxlab.MoBoxFrpClient.Task.TaskTunnelStop;
 import org.moboxlab.MoBoxFrpClient.Task.TaskWriteConfig;
@@ -34,6 +35,7 @@ public class ObjectProcess {
     //启动方法
     public void start() throws Exception{
         BasicInfo.logger.sendInfo("正在启动隧道："+name);
+        CacheStartStatus.clearStatus(name);
         //写入配置
         configFile = "./MoBoxFrp/frp/"+name+".toml";
         executeFile = "./MoBoxFrp/frp/frpc-"+name;
@@ -79,6 +81,7 @@ public class ObjectProcess {
                     if (readLine.contains("start proxy success")) {
                         BasicInfo.logger.sendInfo(prefix+"隧道启动成功！");
                         object.running = true;
+                        CacheStartStatus.setStatus(object.name,"启动成功！");
                     }
                     //链接错误处理
                     if (readLine.contains("connect to server error")) {
@@ -109,11 +112,15 @@ public class ObjectProcess {
                 BasicInfo.logger.sendException(e);
                 BasicInfo.logger.sendWarn("守护进程出现错误！隧道名称："+object.name);
             }
-            if (!object.process.isAlive()) break;
+            if (!object.process.isAlive()) {
+                CacheStartStatus.setStatus(object.name,"启动失败！请查询命令行日志获取信息！");
+                break;
+            }
         }
     }
 
     public void asyncStop() {
+        CacheStartStatus.setStatus(name,"启动失败！请查询命令行日志获取信息！");
         Thread thread = new Thread(() -> TaskTunnelStop.executeTask(name));
         thread.start();
     }

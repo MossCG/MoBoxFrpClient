@@ -5,6 +5,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.moboxlab.MoBoxFrpClient.BasicInfo;
 import org.moboxlab.MoBoxFrpClient.Cache.CacheProcess;
+import org.moboxlab.MoBoxFrpClient.Cache.CacheStartStatus;
 import org.moboxlab.MoBoxFrpClient.Task.TaskTunnelStart;
 import org.moboxlab.MoBoxFrpClient.Web.WebBasic;
 
@@ -49,8 +50,18 @@ public class APIStartTunnel implements HttpHandler {
             }
             //执行启动
             TaskTunnelStart.executeTask(id);
+            //尝试获取结果
+            String result = "获取启动结果失败！请检查命令行信息！";
+            for (int i = 0; i < 90; i++) {
+                Thread.sleep(100L);
+                String status = CacheStartStatus.getStatus(id);
+                if (status == null) continue;
+                if (status.contains("启动成功")) responseData.replace("success",true);
+                result = status;
+                break;
+            }
             //写入响应数据
-            responseData.replace("success",true);
+            responseData.replace("message",result);
         } catch (Exception e) {
             BasicInfo.logger.sendException(e);
             responseData.replace("message","操作失败！服务异常！");
