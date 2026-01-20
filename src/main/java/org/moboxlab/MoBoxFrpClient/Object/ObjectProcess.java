@@ -16,6 +16,9 @@ public class ObjectProcess {
     //隧道基本数据
     public JSONObject data;
 
+    //启动状态
+    public boolean running = false;
+
     //守护线程
     public Thread daemon;
     //进程本体
@@ -75,17 +78,20 @@ public class ObjectProcess {
                     //成功信息
                     if (readLine.contains("start proxy success")) {
                         BasicInfo.logger.sendInfo(prefix+"隧道启动成功！");
+                        object.running = true;
                     }
                     //链接错误处理
                     if (readLine.contains("connect to server error")) {
                         if (readLine.contains("no such host")) {
-                            BasicInfo.logger.sendWarn(prefix+"隧道启动失败：域名解析失败");
+                            BasicInfo.logger.sendWarn(prefix+"隧道连接失败：域名解析失败");
                         }
                         if (readLine.contains("target machine actively refused it")) {
-                            BasicInfo.logger.sendWarn(prefix+"隧道启动失败：目标服务器拒绝链接");
+                            BasicInfo.logger.sendWarn(prefix+"隧道连接失败：目标服务器拒绝链接");
                         }
-                        BasicInfo.logger.sendWarn(prefix+"隧道启动异常！已自动关闭隧道！");
-                        object.asyncStop();
+                        if (!object.running) {
+                            BasicInfo.logger.sendWarn(prefix+"隧道连接异常！已自动关闭隧道！");
+                            object.asyncStop();
+                        }
                     }
                     //启动错误处理
                     if (readLine.contains("start error")) {
