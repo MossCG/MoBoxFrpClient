@@ -802,6 +802,122 @@
             }
         }
 
+        /* ============================
+           广告浮窗样式
+           ============================ */
+
+        /* 浮窗广告容器 */
+        .ad-float-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 300px;
+            max-width: calc(100vw - 48px);
+            z-index: 1001;
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.3s ease;
+        }
+
+        .ad-float-container.hidden {
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+        }
+
+        .ad-float-wrapper {
+            position: relative;
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .ad-float-wrapper:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 关闭按钮 */
+        .ad-close-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 32px;
+            height: 32px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.2s ease;
+            font-size: 18px;
+        }
+
+        .ad-close-btn:hover {
+            background: rgba(0, 0, 0, 0.7);
+            transform: scale(1.1);
+        }
+
+        /* 广告内容 */
+        .ad-content {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+        }
+
+        /* 广告图片 - 添加图片缩放拉伸适应 */
+        .ad-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--secondary-light) 100%);
+        }
+
+        /* 保证图片适应容器，不会变形 */
+        .ad-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 保持宽高比，裁剪多余部分 */
+            object-position: center; /* 居中显示 */
+        }
+
+        /* 图片加载失败时的备用样式 */
+        .ad-image[src=""] {
+            display: none;
+        }
+
+        /* 广告底部信息 */
+        .ad-footer {
+            padding: 16px;
+            background: var(--white);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .ad-label {
+            font-size: 11px;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .ad-desc {
+            font-size: 13px;
+            color: var(--dark);
+            line-height: 1.4;
+        }
+
+        /* 移动端适配 */
         @media (max-width: 768px) {
             .mobile-toggle {
                 display: block;
@@ -838,6 +954,31 @@
             .switch-account-btn {
                 padding: 6px 12px;
                 font-size: 12px;
+            }
+
+            .ad-float-container {
+                width: 280px;
+                bottom: 16px;
+                right: 16px;
+                max-width: calc(100vw - 32px);
+            }
+
+            .ad-image {
+                height: 150px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .ad-float-container {
+                width: 260px;
+            }
+
+            .ad-image {
+                height: 130px;
+            }
+
+            .ad-footer {
+                padding: 12px;
             }
         }
     </style>
@@ -898,6 +1039,23 @@
     </div>
 </div>
 
+<!-- 浮窗广告容器 -->
+<div class="ad-float-container hidden" id="adFloatContainer">
+    <div class="ad-float-wrapper">
+        <button class="ad-close-btn" id="adCloseBtn">×</button>
+        <a href="#" class="ad-content" id="adLink" target="_blank">
+            <!-- 使用SVG占位图，确保广告加载时显示良好 -->
+            <img id="adImage" class="ad-image"
+                 src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='180' viewBox='0 0 300 180'%3E%3Crect width='300' height='180' fill='%23f0f2ff'/%3E%3Ctext x='50%25' y='50%25' font-family='Noto Sans SC' font-size='14' text-anchor='middle' fill='%234361ee'%3E广告加载中...%3C/text%3E%3C/svg%3E"
+                 alt="广告图片">
+            <div class="ad-footer">
+                <div class="ad-label">广告</div>
+                <div class="ad-desc" id="adDesc">欢迎使用MoBoxFrp客户端</div>
+            </div>
+        </a>
+    </div>
+</div>
+
 <!-- 登录模态框 -->
 <div class="modal-overlay" id="loginModalOverlay">
     <div class="modal">
@@ -943,6 +1101,11 @@
     let openedSubmenus = new Set();
     let currentLoginType = 'phone';
     let clientInfoInterval = null;
+
+    // 广告相关配置
+    const AD_CACHE_KEY = 'moboxfrp_ad_cache_client';
+    const AD_CACHE_DURATION = 10 * 60 * 1000; // 10分钟
+    const AD_CLOSE_KEY = 'moboxfrp_ad_closed_client';
 
     function getGreeting() {
         const hour = new Date().getHours();
@@ -1075,6 +1238,238 @@
         } catch (error) {
             console.error('获取侧边栏失败:', error);
             return [];
+        }
+    }
+
+    /**
+     * 获取广告数据
+     */
+    async function fetchAdData() {
+        try {
+            // 检查广告是否被关闭
+            if (isAdClosed()) {
+                console.log('广告已被用户关闭');
+                return null;
+            }
+
+            // 首先尝试从缓存获取
+            const cachedData = getCachedAd();
+            if (cachedData) {
+                return cachedData;
+            }
+
+            // 调用API获取广告
+            const response = await fetch('/API/Ads', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({})  // 根据API定义，不需要传递参数
+            });
+
+            const result = await response.json();
+
+            if (result.success && result.data) {
+                const adData = result.data;
+                // 缓存获取的数据
+                cacheAdData(adData);
+                return adData;
+            } else {
+                console.warn('获取广告失败:', result.message || '未知错误');
+                return null;
+            }
+        } catch (error) {
+            console.error('获取广告失败:', error);
+            return null;
+        }
+    }
+
+    /**
+     * 获取缓存的广告数据
+     */
+    function getCachedAd() {
+        try {
+            const cached = localStorage.getItem(AD_CACHE_KEY);
+            if (!cached) return null;
+
+            const { data, timestamp } = JSON.parse(cached);
+
+            // 检查缓存是否过期
+            const now = Date.now();
+            if (now - timestamp > AD_CACHE_DURATION) {
+                console.log('广告缓存已过期');
+                localStorage.removeItem(AD_CACHE_KEY);
+                return null;
+            }
+
+            console.log('使用缓存的广告数据');
+            return data;
+        } catch (error) {
+            console.error('读取广告缓存失败:', error);
+            localStorage.removeItem(AD_CACHE_KEY);
+            return null;
+        }
+    }
+
+    /**
+     * 保存广告数据到缓存
+     */
+    function cacheAdData(data) {
+        try {
+            const cacheData = {
+                data: data,
+                timestamp: Date.now()
+            };
+            localStorage.setItem(AD_CACHE_KEY, JSON.stringify(cacheData));
+            console.log('广告数据已缓存');
+        } catch (error) {
+            console.error('缓存广告数据失败:', error);
+        }
+    }
+
+    /**
+     * 检查广告是否被关闭
+     */
+    function isAdClosed() {
+        try {
+            const closed = localStorage.getItem(AD_CLOSE_KEY);
+            if (!closed) return false;
+
+            const { timestamp } = JSON.parse(closed);
+            const now = Date.now();
+
+            // 如果关闭时间超过1小时，重新显示广告
+            if (now - timestamp > 60 * 60 * 1000) {
+                localStorage.removeItem(AD_CLOSE_KEY);
+                return false;
+            }
+
+            return true;
+        } catch (error) {
+            console.error('检查广告关闭状态失败:', error);
+            localStorage.removeItem(AD_CLOSE_KEY);
+            return false;
+        }
+    }
+
+    /**
+     * 标记广告为关闭
+     */
+    function markAdAsClosed() {
+        try {
+            const closeData = {
+                timestamp: Date.now()
+            };
+            localStorage.setItem(AD_CLOSE_KEY, JSON.stringify(closeData));
+            console.log('广告已标记为关闭');
+        } catch (error) {
+            console.error('标记广告关闭失败:', error);
+        }
+    }
+
+    /**
+     * 显示广告浮窗
+     */
+    function showAdFloat(adData) {
+        if (!adData || !adData.url_pic) {
+            console.log('无广告数据或图片URL，不显示广告');
+            return;
+        }
+
+        const adContainer = document.getElementById('adFloatContainer');
+        const adImage = document.getElementById('adImage');
+        const adLink = document.getElementById('adLink');
+        const adDesc = document.getElementById('adDesc');
+
+        // 设置广告内容
+        if (adData.url_pic) {
+            adImage.src = adData.url_pic;
+            adImage.alt = '广告图片';
+        }
+
+        if (adData.url_jump) {
+            // 确保跳转链接是完整的URL
+            let jumpUrl = adData.url_jump;
+            if (!jumpUrl.startsWith('http')) {
+                // 如果是相对路径，添加基础URL
+                jumpUrl = new URL(jumpUrl, window.location.origin).href;
+            }
+            adLink.href = jumpUrl;
+        } else {
+            // 默认跳转链接
+            adLink.href = '/ads/jump?jumpID=default';
+        }
+
+        // 设置广告描述
+        if (adData.desc) {
+            adDesc.textContent = adData.desc;
+        } else {
+            adDesc.textContent = '欢迎使用MoBoxFrp客户端';
+        }
+
+        // 延迟显示广告，让页面先加载
+        setTimeout(() => {
+            adContainer.classList.remove('hidden');
+        }, 1500);
+    }
+
+    /**
+     * 初始化广告浮窗
+     */
+    async function initAdFloat() {
+        try {
+            const adData = await fetchAdData();
+            if (adData) {
+                showAdFloat(adData);
+            } else {
+                console.log('没有可显示的广告');
+            }
+        } catch (error) {
+            console.error('初始化广告失败:', error);
+        }
+    }
+
+    /**
+     * 初始化广告事件
+     */
+    function initAdEvents() {
+        const adCloseBtn = document.getElementById('adCloseBtn');
+        const adContainer = document.getElementById('adFloatContainer');
+
+        // 关闭按钮点击事件
+        if (adCloseBtn) {
+            adCloseBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                markAdAsClosed();
+                adContainer.classList.add('hidden');
+                showNotification('广告已关闭，1小时内不再显示');
+            });
+        }
+
+        // 广告点击事件
+        const adLink = document.getElementById('adLink');
+        if (adLink) {
+            adLink.addEventListener('click', () => {
+                console.log('广告被点击，跳转到:', adLink.href);
+            });
+        }
+
+        // 处理广告图片加载失败
+        const adImage = document.getElementById('adImage');
+        if (adImage) {
+            adImage.addEventListener('error', function() {
+                console.warn('广告图片加载失败');
+                // 设置备用图片
+                this.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="300" height="180"%3E%3Crect width="300" height="180" fill="%23f5f7ff"/%3E%3Ctext x="50%25" y="50%25" font-family="Noto Sans SC" font-size="12" text-anchor="middle" fill="%236c757d"%3E广告图片加载失败%3C/text%3E%3C/svg%3E';
+                this.alt = '广告图片加载失败';
+
+                // 可以尝试隐藏广告容器
+                setTimeout(() => {
+                    adContainer.classList.add('hidden');
+                }, 3000);
+            });
         }
     }
 
@@ -1722,6 +2117,9 @@
         initSidebarToggle();
         initEventListeners();
 
+        // 初始化广告事件（必须在页面其他内容加载前初始化）
+        initAdEvents();
+
         // 并发获取数据
         const [user, client, sidebar] = await Promise.all([
             fetchUserInfo(),
@@ -1743,6 +2141,11 @@
 
         // 开始定期更新客户端信息
         startClientInfoUpdate();
+
+        // 初始化广告浮窗（延迟执行，不阻塞主页面）
+        setTimeout(() => {
+            initAdFloat();
+        }, 500);
 
         window.addEventListener('resize', handleResize);
 

@@ -58,7 +58,7 @@ public class WebMain {
             server.createContext("/API/Tunnel/Log",new APIGetTunnelLog());
             //信息类接口
             server.createContext("/API/Sidebar",new APISidebar());
-
+            server.createContext("/API/Ads",new APIAdGet());
             //启动服务
             server.setExecutor(Executors.newCachedThreadPool());
             server.start();

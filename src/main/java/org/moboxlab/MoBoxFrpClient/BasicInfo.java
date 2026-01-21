@@ -34,8 +34,10 @@ public class BasicInfo {
     //用户信息
     public static long timeUserInfo = 0;
     public static long timeCodeInfo = 0;
+    public static long timeAdInfo = 0;
     public static JSONObject userInfo;
     public static JSONArray codeInfo;
+    public static JSONObject adInfo;
 
     //守护进程
     public static Process daemon;
