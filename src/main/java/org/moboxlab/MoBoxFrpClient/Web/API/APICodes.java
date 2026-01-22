@@ -55,6 +55,11 @@ public class APICodes implements HttpHandler {
             String ip = WebBasic.getRemoteIP(exchange);
             BasicInfo.sendDebug(ip+" "+exchange.getRequestURI().toString());
             JSONObject requestData = WebBasic.loadRequestData(exchange);
+            //检查是否登录
+            if (!BasicInfo.login) {
+                responseData.replace("message","没登录哦~");
+                return;
+            }
             //检查缓存有效期
             if (BasicInfo.timeCodeInfo + 45*1000L < System.currentTimeMillis()) {
                 TaskGetCodes.executeTask(false);
