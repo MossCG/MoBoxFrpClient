@@ -23,7 +23,10 @@ public class BasicInfo {
     public static String contributor = "MossCG";
 
     //API地址
-    public static String api = "https://www.moboxfrp.top";
+    public static String[] fallbacks = {
+            "https://www.moboxfrp.top",
+            "https://panel.moboxfrp.top"
+    };
     //登录信息
     public static boolean start = false;
     public static boolean login = false;
