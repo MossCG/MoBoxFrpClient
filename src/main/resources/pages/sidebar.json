@@ -41,11 +41,19 @@
     ]
   },
   {
+    "id": "main-docs",
+    "name": "文档",
+    "icon": "\uD83D\uDD0D",
+    "type": "single",
+    "order": 15,
+    "url": "https://mobox.zhayi.cc/#/"
+  },
+  {
     "id": "main-web",
     "name": "官网",
     "icon": "\uD83D\uDDA5\uFE0F",
     "type": "single",
-    "order": 10,
+    "order": 20,
     "url": "https://www.moboxfrp.top/"
   }
 ]
