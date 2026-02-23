@@ -24,6 +24,7 @@ public class BasicInfo {
 
     //API地址
     public static String[] fallbacks = {
+            "http://www.moboxfrp.com",
             "https://www.moboxfrp.top",
             "https://panel.moboxfrp.top"
     };
