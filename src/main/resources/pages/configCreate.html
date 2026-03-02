@@ -7,6 +7,7 @@
     <title>MoBoxFrp - 创建配置文件</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* ----- 基础亮色变量 (参考穿透码管理页) ----- */
         :root {
             --primary: #4361ee;
             --primary-dark: #3a56d4;
@@ -31,6 +32,54 @@
             --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             --sidebar-width: 260px;
             --header-height: 60px;
+            --bg-gradient-start: #f5f7ff;
+            --bg-gradient-end: #f0f2ff;
+            --modal-bg: #ffffff;
+            --header-bg: #ffffff;
+            --sidebar-bg: #ffffff;
+            --table-row-hover: rgba(67, 97, 238, 0.1);
+            --input-bg: #ffffff;
+            --token-bg: #f8f9fa;
+            --detail-item-bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --badge-hover-bg: var(--primary-light);
+            --info-bg: #f8f9fa;
+        }
+
+        /* ----- 深色模式变量 (与穿透码管理页保持完全一致) ----- */
+        body.dark-mode {
+            --primary: #5c7cff;
+            --primary-dark: #4a64d9;
+            --primary-light: rgba(92, 124, 255, 0.2);
+            --secondary: #a065d9;
+            --secondary-light: rgba(160, 101, 217, 0.15);
+            --success: #0fcf70;
+            --success-light: rgba(15, 207, 112, 0.15);
+            --warning: #fa4d8c;
+            --warning-light: rgba(250, 77, 140, 0.15);
+            --danger: #f95c6f;
+            --danger-light: rgba(249, 92, 111, 0.15);
+            --info: #5dd4ff;
+            --info-light: rgba(93, 212, 255, 0.15);
+            --white: #1e1e2f;
+            --dark: #eaeef5;
+            --gray: #a0a8b8;
+            --light-gray: #2c2c3a;
+            --border-color: #3a3a4e;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --bg-gradient-start: #191926;
+            --bg-gradient-end: #222230;
+            --modal-bg: #28283a;
+            --header-bg: #1e1e2f;
+            --sidebar-bg: #1e1e2f;
+            --table-row-hover: rgba(92, 124, 255, 0.15);
+            --input-bg: #2c2c3a;
+            --token-bg: #2c2c3a;
+            --detail-item-bg: #2c2c3a;
+            --card-bg: #1e1e2f;
+            --badge-hover-bg: rgba(92, 124, 255, 0.25);
+            --info-bg: #2c2c3a;
         }
 
         * {
@@ -41,12 +90,13 @@
 
         body {
             font-family: 'Noto Sans SC', sans-serif;
-            background: linear-gradient(135deg, #f5f7ff 0%, #f0f2ff 100%);
+            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
             color: var(--dark);
             min-height: 100vh;
             margin: 0;
             padding: 0;
             overflow-x: hidden;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
         }
 
         .header-container {
@@ -55,7 +105,7 @@
             left: 0;
             right: 0;
             height: var(--header-height);
-            background: var(--white);
+            background: var(--header-bg);
             box-shadow: var(--shadow);
             display: flex;
             align-items: center;
@@ -102,6 +152,26 @@
             display: flex;
             align-items: center;
             gap: 16px;
+        }
+
+        /* 主题切换按钮样式 */
+        .theme-toggle-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: var(--light-gray);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--gray);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .theme-toggle-btn:hover {
+            background: var(--border-color);
+            color: var(--dark);
         }
 
         .greeting {
@@ -180,13 +250,14 @@
             left: 0;
             bottom: 0;
             width: var(--sidebar-width);
-            background: var(--white);
+            background: var(--sidebar-bg);
             box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
             display: flex;
             flex-direction: column;
             z-index: 999;
             overflow-y: auto;
             overflow-x: hidden;
+            transition: background-color 0.3s, transform 0.3s;
         }
 
         .sidebar-menu {
@@ -300,7 +371,7 @@
             margin-top: var(--header-height);
             padding: 24px;
             min-height: calc(100vh - var(--header-height));
-            transition: var(--transition);
+            transition: margin 0.3s, background-color 0.3s;
             position: relative;
             z-index: 1;
         }
@@ -328,7 +399,7 @@
         }
 
         .form-card {
-            background: var(--white);
+            background: var(--card-bg);
             border-radius: 16px;
             padding: 32px;
             box-shadow: var(--shadow-sm);
@@ -405,7 +476,8 @@
             font-size: 15px;
             font-family: inherit;
             transition: var(--transition);
-            background: var(--white);
+            background: var(--input-bg);
+            color: var(--dark);
         }
 
         .form-input:focus, .form-select:focus {
@@ -528,11 +600,13 @@
             cursor: pointer;
             transition: var(--transition);
             user-select: none;
+            background: var(--card-bg);
+            color: var(--dark);
         }
 
         .protocol-badge:hover {
             border-color: var(--primary);
-            background: var(--primary-light);
+            background: var(--badge-hover-bg);
         }
 
         .protocol-badge.selected {
@@ -550,7 +624,7 @@
 
         .code-info {
             display: none;
-            background: var(--light-gray);
+            background: var(--info-bg);
             border-radius: 8px;
             padding: 16px;
             margin-top: 16px;
@@ -608,6 +682,7 @@
             font-weight: 500;
             cursor: pointer;
             transition: var(--transition);
+            color: var(--dark);
         }
 
         .port-option:hover {
@@ -729,7 +804,7 @@
         }
 
         .modal {
-            background: var(--white);
+            background: var(--modal-bg);
             border-radius: 16px;
             width: 90%;
             max-width: 500px;
@@ -893,55 +968,69 @@
             color: var(--dark);
         }
 
+        /* 登录标签样式 */
+        .login-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+        .login-tab {
+            background: none;
+            border: none;
+            padding: 8px 16px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--gray);
+            cursor: pointer;
+            border-radius: 20px;
+            transition: var(--transition);
+        }
+        .login-tab.active {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
         @media (max-width: 768px) {
             .mobile-toggle {
                 display: block;
             }
-
             .greeting {
                 display: none;
             }
-
             .sidebar-container {
                 transform: translateX(-100%);
-                transition: transform 0.3s ease;
                 width: 280px;
                 box-shadow: 2px 0 20px rgba(0, 0, 0, 0.15);
             }
-
             .sidebar-container.open {
                 transform: translateX(0);
             }
-
             .main-content {
                 margin-left: 0;
                 padding: 16px;
             }
-
             .sidebar-overlay.open {
                 display: block;
             }
-
             .user-section {
                 gap: 12px;
             }
-
-            .switch-account-btn {
+            .switch-account-btn, .theme-toggle-btn {
                 padding: 6px 12px;
                 font-size: 12px;
             }
-
             .form-actions {
                 flex-direction: column;
             }
-
             .form-actions .btn {
                 width: 100%;
             }
         }
     </style>
 </head>
-<body>
+<body class="dark-mode"> <!-- 强制默认深色，与上一页保持一致 -->
 <div class="header-container">
     <div class="logo-section">
         <button class="mobile-toggle" id="sidebarToggle">☰</button>
@@ -952,6 +1041,10 @@
     </div>
 
     <div class="user-section">
+        <button class="theme-toggle-btn" id="themeToggleBtn">
+            <span id="themeIcon">🌙</span>
+            <span id="themeText">深色</span>
+        </button>
         <button class="switch-account-btn" id="switchAccountBtn">
             <span>🔄</span>
             <span>切换账号</span>
@@ -1036,6 +1129,16 @@
 </div>
 
 <script>
+    // 立即从localStorage读取主题偏好，若无则默认深色（'dark'）
+    (function() {
+        const savedTheme = localStorage.getItem('moboxfrp_theme') || 'dark';
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+        } else {
+            document.body.classList.remove('dark-mode');
+        }
+    })();
+
     let currentUser = null;
     let codesList = [];
     let sidebarData = null;
@@ -1086,6 +1189,22 @@
                 notification.parentNode.removeChild(notification);
             }
         }, 3000);
+    }
+
+    // 主题切换函数
+    function toggleTheme() {
+        const isDark = document.body.classList.contains('dark-mode');
+        if (isDark) {
+            document.body.classList.remove('dark-mode');
+            localStorage.setItem('moboxfrp_theme', 'light');
+            document.getElementById('themeIcon').textContent = '☀️';
+            document.getElementById('themeText').textContent = '亮色';
+        } else {
+            document.body.classList.add('dark-mode');
+            localStorage.setItem('moboxfrp_theme', 'dark');
+            document.getElementById('themeIcon').textContent = '🌙';
+            document.getElementById('themeText').textContent = '深色';
+        }
     }
 
     async function fetchUserInfo() {
@@ -1181,13 +1300,11 @@
             return;
         }
 
-        // 按order字段排序
         const sortedMenus = [...menus].sort((a, b) => a.order - b.order);
 
         let html = '';
 
         sortedMenus.forEach(menu => {
-            // 检查当前菜单是否应该展开
             const isMenuActive = isMenuActiveForPath(menu, currentPath);
             const isSubmenuOpen = openedSubmenus.has(menu.id) || isMenuActive;
 
@@ -1203,7 +1320,6 @@
                     </li>
                 `;
             } else if (menu.type === 'group' && menu.submenus) {
-                // 对子菜单排序
                 const sortedSubmenus = [...menu.submenus].sort((a, b) => a.order - b.order);
 
                 html += `
@@ -1250,7 +1366,6 @@
     }
 
     function bindSidebarEvents() {
-        // 处理分组菜单点击事件
         document.querySelectorAll('.menu-link[data-type="group"]').forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -1270,7 +1385,6 @@
             });
         });
 
-        // 处理单页菜单点击事件
         document.querySelectorAll('.menu-link[data-type="single"]').forEach(link => {
             link.addEventListener('click', function(e) {
                 if (this.classList.contains('active')) {
@@ -1293,7 +1407,6 @@
             });
         });
 
-        // 处理子菜单点击事件
         document.querySelectorAll('.submenu-link').forEach(link => {
             link.addEventListener('click', function(e) {
                 if (this.classList.contains('active')) {
@@ -1340,7 +1453,6 @@
         document.getElementById('userAvatar').textContent = userName.charAt(0).toUpperCase();
         document.getElementById('greetingText').textContent = getGreeting();
 
-        // 根据登录状态显示或隐藏切换账号按钮
         const switchAccountBtn = document.getElementById('switchAccountBtn');
         if (user.username && user.username !== '未登录' && user.username !== '加载失败') {
             switchAccountBtn.style.display = 'flex';
@@ -1363,7 +1475,6 @@
         for (const part of parts) {
             const trimmedPart = part.trim();
             if (trimmedPart.includes('-')) {
-                // 解析端口范围
                 const [start, end] = trimmedPart.split('-').map(num => parseInt(num.trim()));
                 if (!isNaN(start) && !isNaN(end) && start <= end) {
                     for (let i = start; i <= end; i++) {
@@ -1373,7 +1484,6 @@
                     }
                 }
             } else {
-                // 单个端口
                 const port = parseInt(trimmedPart);
                 if (!isNaN(port) && port >= 1 && port <= 65535) {
                     ports.push(port.toString());
@@ -1949,7 +2059,6 @@
             if (result.success) {
                 showNotification('配置文件创建成功！请到配置文件管理页面查看。');
 
-                // 创建成功后的提示
                 setTimeout(() => {
                     if (confirm('配置文件创建成功！是否要前往配置文件管理页面？')) {
                         window.location.href = '/services/configManager';
@@ -2016,11 +2125,9 @@
                 showNotification('登录成功');
                 closeLoginModal();
 
-                // 重新获取用户信息和穿透码列表
                 const user = await fetchUserInfo();
                 const codes = await fetchCodes();
 
-                // 重新渲染表单
                 if (codes) {
                     renderConfigForm();
                 }
@@ -2079,6 +2186,9 @@
         // 切换账号按钮
         document.getElementById('switchAccountBtn').addEventListener('click', showLoginModal);
 
+        // 主题切换按钮
+        document.getElementById('themeToggleBtn').addEventListener('click', toggleTheme);
+
         // 登录相关事件
         document.getElementById('loginModalClose').addEventListener('click', closeLoginModal);
         document.getElementById('loginCancelBtn').addEventListener('click', closeLoginModal);
@@ -2125,6 +2235,11 @@
 
     async function initPage() {
         document.getElementById('greetingText').textContent = getGreeting();
+
+        // 根据当前主题设置按钮文字
+        const isDark = document.body.classList.contains('dark-mode');
+        document.getElementById('themeIcon').textContent = isDark ? '🌙' : '☀️';
+        document.getElementById('themeText').textContent = isDark ? '深色' : '亮色';
 
         initSidebarToggle();
         initEventListeners();

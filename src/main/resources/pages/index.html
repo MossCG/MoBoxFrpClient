@@ -7,6 +7,7 @@
     <title>MoBoxFrp - 客户端</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* ----- 基础亮色变量 (与之前三页保持完全一致) ----- */
         :root {
             --primary: #4361ee;
             --primary-dark: #3a56d4;
@@ -29,6 +30,54 @@
             --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             --sidebar-width: 260px;
             --header-height: 60px;
+            --bg-gradient-start: #f5f7ff;
+            --bg-gradient-end: #f0f2ff;
+            --modal-bg: #ffffff;
+            --header-bg: #ffffff;
+            --sidebar-bg: #ffffff;
+            --table-row-hover: rgba(67, 97, 238, 0.1);
+            --input-bg: #ffffff;
+            --card-bg: #ffffff;
+            --badge-hover-bg: var(--primary-light);
+            --card-header-bg: #f8f9fa;
+            --progress-bg: var(--light-gray);
+            --ad-footer-bg: #ffffff;
+            --ad-wrapper-border: rgba(0, 0, 0, 0.1);
+        }
+
+        /* ----- 深色模式变量 (与之前三页完全一致) ----- */
+        body.dark-mode {
+            --primary: #5c7cff;
+            --primary-dark: #4a64d9;
+            --primary-light: rgba(92, 124, 255, 0.2);
+            --secondary: #a065d9;
+            --secondary-light: rgba(160, 101, 217, 0.15);
+            --success: #0fcf70;
+            --success-light: rgba(15, 207, 112, 0.15);
+            --warning: #fa4d8c;
+            --warning-light: rgba(250, 77, 140, 0.15);
+            --info: #5dd4ff;
+            --info-light: rgba(93, 212, 255, 0.15);
+            --white: #1e1e2f;
+            --dark: #eaeef5;
+            --gray: #a0a8b8;
+            --light-gray: #2c2c3a;
+            --border-color: #3a3a4e;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --bg-gradient-start: #191926;
+            --bg-gradient-end: #222230;
+            --modal-bg: #28283a;
+            --header-bg: #1e1e2f;
+            --sidebar-bg: #1e1e2f;
+            --table-row-hover: rgba(92, 124, 255, 0.15);
+            --input-bg: #2c2c3a;
+            --card-bg: #1e1e2f;
+            --badge-hover-bg: rgba(92, 124, 255, 0.25);
+            --card-header-bg: #2c2c3a;
+            --progress-bg: #3a3a4e;
+            --ad-footer-bg: #1e1e2f;
+            --ad-wrapper-border: rgba(255, 255, 255, 0.1);
         }
 
         * {
@@ -39,12 +88,13 @@
 
         body {
             font-family: 'Noto Sans SC', sans-serif;
-            background: linear-gradient(135deg, #f5f7ff 0%, #f0f2ff 100%);
+            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
             color: var(--dark);
             min-height: 100vh;
             margin: 0;
             padding: 0;
             overflow-x: hidden;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
         }
 
         .header-container {
@@ -53,7 +103,7 @@
             left: 0;
             right: 0;
             height: var(--header-height);
-            background: var(--white);
+            background: var(--header-bg);
             box-shadow: var(--shadow);
             display: flex;
             align-items: center;
@@ -100,6 +150,26 @@
             display: flex;
             align-items: center;
             gap: 16px;
+        }
+
+        /* 主题切换按钮 */
+        .theme-toggle-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: var(--light-gray);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--gray);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .theme-toggle-btn:hover {
+            background: var(--border-color);
+            color: var(--dark);
         }
 
         .greeting {
@@ -178,13 +248,14 @@
             left: 0;
             bottom: 0;
             width: var(--sidebar-width);
-            background: var(--white);
+            background: var(--sidebar-bg);
             box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
             display: flex;
             flex-direction: column;
             z-index: 999;
             overflow-y: auto;
             overflow-x: hidden;
+            transition: background-color 0.3s, transform 0.3s;
         }
 
         .sidebar-menu {
@@ -298,7 +369,7 @@
             margin-top: var(--header-height);
             padding: 24px;
             min-height: calc(100vh - var(--header-height));
-            transition: var(--transition);
+            transition: margin 0.3s, background-color 0.3s;
             position: relative;
             z-index: 1;
         }
@@ -334,7 +405,7 @@
         }
 
         .info-card {
-            background: var(--white);
+            background: var(--card-bg);
             border-radius: 16px;
             padding: 32px;
             box-shadow: var(--shadow-sm);
@@ -468,7 +539,7 @@
         .progress-bar {
             width: 100%;
             height: 8px;
-            background: var(--light-gray);
+            background: var(--progress-bg);
             border-radius: 4px;
             overflow: hidden;
             margin-top: 4px;
@@ -477,7 +548,7 @@
         .progress-fill {
             height: 100%;
             border-radius: 4px;
-            background: linear-gradient(90deg, #4361ee, #3a56d4);
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
             transition: width 0.3s ease;
         }
 
@@ -558,7 +629,7 @@
         }
 
         .modal {
-            background: var(--white);
+            background: var(--modal-bg);
             border-radius: 16px;
             width: 90%;
             max-width: 400px;
@@ -638,6 +709,8 @@
             border-radius: 8px;
             font-size: 15px;
             font-family: inherit;
+            background: var(--input-bg);
+            color: var(--dark);
             transition: var(--transition);
         }
 
@@ -803,10 +876,9 @@
         }
 
         /* ============================
-           广告浮窗样式
+           广告浮窗样式 (深色适配)
            ============================ */
 
-        /* 浮窗广告容器 */
         .ad-float-container {
             position: fixed;
             bottom: 24px;
@@ -827,12 +899,12 @@
 
         .ad-float-wrapper {
             position: relative;
-            background: var(--white);
+            background: var(--card-bg);
             border-radius: 16px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
             overflow: hidden;
             transition: all 0.3s ease;
-            border: 1px solid rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--ad-wrapper-border);
         }
 
         .ad-float-wrapper:hover {
@@ -840,7 +912,6 @@
             box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
         }
 
-        /* 关闭按钮 */
         .ad-close-btn {
             position: absolute;
             top: 12px;
@@ -865,7 +936,6 @@
             transform: scale(1.1);
         }
 
-        /* 广告内容 */
         .ad-content {
             display: block;
             text-decoration: none;
@@ -873,7 +943,6 @@
             cursor: pointer;
         }
 
-        /* 广告图片 - 添加图片缩放拉伸适应 */
         .ad-image {
             width: 100%;
             height: 180px;
@@ -882,23 +951,20 @@
             background: linear-gradient(135deg, var(--primary-light) 0%, var(--secondary-light) 100%);
         }
 
-        /* 保证图片适应容器，不会变形 */
         .ad-image {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* 保持宽高比，裁剪多余部分 */
-            object-position: center; /* 居中显示 */
+            object-fit: cover;
+            object-position: center;
         }
 
-        /* 图片加载失败时的备用样式 */
         .ad-image[src=""] {
             display: none;
         }
 
-        /* 广告底部信息 */
         .ad-footer {
             padding: 16px;
-            background: var(--white);
+            background: var(--ad-footer-bg);
             border-top: 1px solid var(--border-color);
         }
 
@@ -917,7 +983,6 @@
             line-height: 1.4;
         }
 
-        /* 移动端适配 */
         @media (max-width: 768px) {
             .mobile-toggle {
                 display: block;
@@ -951,7 +1016,7 @@
                 gap: 12px;
             }
 
-            .switch-account-btn {
+            .switch-account-btn, .theme-toggle-btn {
                 padding: 6px 12px;
                 font-size: 12px;
             }
@@ -983,7 +1048,7 @@
         }
     </style>
 </head>
-<body>
+<body class="dark-mode"> <!-- 强制默认深色，与之前三页保持一致 -->
 <div class="header-container">
     <div class="logo-section">
         <button class="mobile-toggle" id="sidebarToggle">☰</button>
@@ -994,6 +1059,10 @@
     </div>
 
     <div class="user-section">
+        <button class="theme-toggle-btn" id="themeToggleBtn">
+            <span id="themeIcon">🌙</span>
+            <span id="themeText">深色</span>
+        </button>
         <button class="switch-account-btn" id="switchAccountBtn">
             <span>🔄</span>
             <span>切换账号</span>
@@ -1095,6 +1164,16 @@
 </div>
 
 <script>
+    // 立即从localStorage读取主题偏好，若无则默认深色（'dark'）
+    (function() {
+        const savedTheme = localStorage.getItem('moboxfrp_theme') || 'dark';
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+        } else {
+            document.body.classList.remove('dark-mode');
+        }
+    })();
+
     let currentUser = null;
     let clientInfo = null;
     let sidebarData = null;
@@ -1133,6 +1212,22 @@
                 notification.parentNode.removeChild(notification);
             }
         }, 3000);
+    }
+
+    // 主题切换函数
+    function toggleTheme() {
+        const isDark = document.body.classList.contains('dark-mode');
+        if (isDark) {
+            document.body.classList.remove('dark-mode');
+            localStorage.setItem('moboxfrp_theme', 'light');
+            document.getElementById('themeIcon').textContent = '☀️';
+            document.getElementById('themeText').textContent = '亮色';
+        } else {
+            document.body.classList.add('dark-mode');
+            localStorage.setItem('moboxfrp_theme', 'dark');
+            document.getElementById('themeIcon').textContent = '🌙';
+            document.getElementById('themeText').textContent = '深色';
+        }
     }
 
     async function fetchUserInfo() {
@@ -1461,11 +1556,10 @@
         if (adImage) {
             adImage.addEventListener('error', function() {
                 console.warn('广告图片加载失败');
-                // 设置备用图片
-                this.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="300" height="180"%3E%3Crect width="300" height="180" fill="%23f5f7ff"/%3E%3Ctext x="50%25" y="50%25" font-family="Noto Sans SC" font-size="12" text-anchor="middle" fill="%236c757d"%3E广告图片加载失败%3C/text%3E%3C/svg%3E';
+                // 设置备用图片（深色模式适配背景）
+                this.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="300" height="180"%3E%3Crect width="300" height="180" fill="%232c2c3a"/%3E%3Ctext x="50%25" y="50%25" font-family="Noto Sans SC" font-size="12" text-anchor="middle" fill="%23a0a8b8"%3E广告图片加载失败%3C/text%3E%3C/svg%3E';
                 this.alt = '广告图片加载失败';
 
-                // 可以尝试隐藏广告容器
                 setTimeout(() => {
                     adContainer.classList.add('hidden');
                 }, 3000);
@@ -2051,6 +2145,9 @@
         // 切换账号按钮
         document.getElementById('switchAccountBtn').addEventListener('click', showLoginModal);
 
+        // 主题切换按钮
+        document.getElementById('themeToggleBtn').addEventListener('click', toggleTheme);
+
         // 登录相关事件
         document.getElementById('loginModalClose').addEventListener('click', closeLoginModal);
         document.getElementById('loginCancelBtn').addEventListener('click', closeLoginModal);
@@ -2113,6 +2210,11 @@
 
     async function initPage() {
         document.getElementById('greetingText').textContent = getGreeting();
+
+        // 根据当前主题设置按钮文字
+        const isDark = document.body.classList.contains('dark-mode');
+        document.getElementById('themeIcon').textContent = isDark ? '🌙' : '☀️';
+        document.getElementById('themeText').textContent = isDark ? '深色' : '亮色';
 
         initSidebarToggle();
         initEventListeners();
